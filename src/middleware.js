@@ -9,9 +9,6 @@ const middleware = async (req) => {
             secret: process.env.NEXTAUTH_SECRET,
         });
 
-
-        console.log(process.env.NEXTAUTH_SECRET, "==", token);
-
         const { pathname } = req.nextUrl;
 
         const publicUrl = pathname === '/' || pathname === '/login' || pathname === '/signup';
@@ -27,12 +24,8 @@ const middleware = async (req) => {
     } catch (error) {
         console.error(error);
     }
-
-
-    // return NextResponse.next();
-
-
 }
+
 export const config = {
     matcher: [
         "/",

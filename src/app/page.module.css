@@ -20,3 +20,44 @@
     font-size: 7rem;
     font-weight: 800;
 }
+
+.error_page {
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.error_page h1 {
+    font-size: 3rem;
+}
+
+.error_page p {
+    font-size: 1.8rem;
+    color: var(--danger);
+}
+
+.error_page button {
+    width: 30rem;
+}
+
+.not_found {
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.not_found h1 {
+    font-size: 3rem;
+    display: flex;
+    gap: 1rem;
+    color: var(--danger);
+}
+
+.not_found h1 span:first-child {
+    color: var(--text);
+}
+
+.not_found h1 span:last-child {
+    color: var(--danger);
+
+}

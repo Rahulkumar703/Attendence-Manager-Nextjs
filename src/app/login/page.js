@@ -39,7 +39,6 @@ export default function LoginPage() {
             })
 
             const data = await res.json();
-            toast[data.type](data.message);
 
             if (res.ok) {
                 if (data.type === "success") {
@@ -47,7 +46,7 @@ export default function LoginPage() {
                         redirect: false,
                         ...loginForm,
                     });
-
+                    toast[data.type](data.message);
                     const callbackUrl = params.get('callbackUrl') || '/dashboard';
                     router.push(callbackUrl);
                 }

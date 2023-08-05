@@ -24,7 +24,7 @@ main.signup {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    background: var(--bg);
+    background: var(--transparent-dark);
     padding: 2rem 1rem;
     border-radius: 1rem;
 }
@@ -64,7 +64,7 @@ main.signup {
 }
 
 .extra_links a {
-    color: var(--link);
+    color: var(--info);
     text-decoration: underline;
 }
 

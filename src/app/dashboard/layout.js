@@ -1,4 +1,6 @@
+"use client"
 
+import { useSession } from "next-auth/react"
 
 export const metadata = {
     title: 'Dashboard',
@@ -6,7 +8,9 @@ export const metadata = {
 }
 
 export default function DashboardLayout({ children }) {
+
     return (
         children
     )
+
 }

@@ -37,7 +37,7 @@
     left: .2rem;
     right: .2rem;
     bottom: .2rem;
-    background: var(--bg);
+    background: var(--transparent-dark);
     z-index: -1;
     border-radius: .25rem;
     opacity: 0;
@@ -85,7 +85,7 @@ button.filled:active {
     left: .2rem;
     right: .2rem;
     bottom: .2rem;
-    background: var(--bg);
+    background: var(--transparent-dark);
     z-index: -1;
     border-radius: .25rem;
     opacity: 1;

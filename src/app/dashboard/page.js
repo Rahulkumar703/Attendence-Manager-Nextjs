@@ -5,15 +5,21 @@ import Button from '@/components/Button';
 import { GrFormAdd, GrFormClose } from 'react-icons/gr';
 import './style.css'
 import { useSession } from 'next-auth/react';
+import AdminDashboard from '@/components/AdminDashboard';
+import FacultyDashboard from '@/components/FacultyDashboard';
+import StudentDashboard from '@/components/StudentDashboard';
 
 
 
 export default function DashboardPage() {
 
     const { data } = useSession();
-
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({});
+
+    const session = useSession();
+
+
 
     const addClass = (e) => {
         e.preventDefault();
@@ -23,31 +29,25 @@ export default function DashboardPage() {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     }
 
-    return (
-        <main>
-            <div className={`dashboard_header${showPopup ? ' active' : ''}`}>
-                <div className="row">
-                    <h2>Add Your Classes</h2>
-                    <Button
-                        type="submit"
-                        varrient="outline"
-                        onClick={() => { setShowPopup(prev => !prev) }}
-                        icon={showPopup ? <GrFormClose size={20} /> : <GrFormAdd size={20} />}
-                    >
-                        {showPopup ? 'Close' : 'Add'}
-                    </Button>
-                </div>
+    if (session.status === 'authenticated') {
 
-                <div className={`form_wrapper${showPopup ? ' active' : ''}`}>
-                    <form onSubmit={addClass} className={`subject_form`}>
-                        <Input type={'text'} id={'subject'} label={'Subject'} onChange={handleChange} name={"subject"} />
-                        <Input type={'number'} id={'semester'} label={'Semester'} onChange={handleChange} name={"semester"} />
-                        <Button type="submit" varrient="filled" onClick={addClass} icon={<GrFormAdd size={20} />}>Add</Button>
-                    </form>
-                </div>
-            </div>
-            <div className="dashboard_body">
-            </div>
-        </main>
-    )
+        const { user } = session.data;
+
+        switch (user.level) {
+            case 3:
+                return <AdminDashboard />
+            case 2:
+                return <FacultyDashboard />
+            default:
+                return <StudentDashboard />
+        }
+    }
+    else {
+        return (
+            <main>
+                <h1>Loading...</h1>
+            </main>
+        )
+    }
+
 }

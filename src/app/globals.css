@@ -15,32 +15,93 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
+
+.Toastify__progress-bar--info,
+.Toastify__progress-bar--success,
+.Toastify__progress-bar--warning,
+.Toastify__progress-bar--error,
+.Toastify__progress-bar--info {
+  background: var(--transparent-dark) !important;
+  margin: 0 .2rem !important;
+  margin-bottom: .2rem !important;
+  border-radius: .2rem !important;
+}
+
+.Toastify__close-button {
+  color: var(--bg) !important;
+}
+
+.Toastify__toast-body {
+  font-size: 1.6rem;
+  font-family: Poppins, sans-serif;
+}
+
+:root {
+
+  /* Light Mode */
   --bg: hsl(227, 100%, 96%);
   --text: hsl(227, 20%, 9%);
+  --transparent: hsla(240, 42%, 83%, 0.5);
+  --transparent-light: hsla(240, 42%, 83%, 0.1);
+  --transparent-dark: hsla(227, 100%, 96%, 0.7);
+  --transparent-invert: hsla(240, 15%, 22%, 0.3);
+  --gradient1: hsl(250, 95%, 62%);
+  --gradient2: hsl(270, 95%, 62%);
+  --shadow: hsla(240, 20%, 3%, 0.4);
+  /* Light Mode */
+
+}
+
+body {
+
+  /* common */
   --white: hsl(223, 100%, 99%);
   --black: hsl(227, 20%, 9%);
-  --transparent: hsla(240, 42%, 83%, 0.5);
-  --transparent-invert: hsla(240, 15%, 22%, 0.3);
-  --gradient1: hsl(228, 100%, 71%);
-  --gradient2: hsl(133, 100%, 72%);
-  --link: hsl(215, 94%, 61%);
-  --shadow: hsla(240, 20%, 3%, 0.4);
-  min-height: 100svh;
+  --info: hsl(208, 70%, 48%);
+  --success: hsl(149, 81%, 48%);
+  --warning: hsl(38, 84%, 59%);
+  --error: hsl(0, 100%, 67%);
+  /* common */
+
+  /* Toastify */
+  --toastify-color-info: var(--info);
+  --toastify-color-success: var(--success);
+  --toastify-color-warning: var(--warning);
+  --toastify-color-error: var(--error);
+
+  --toastify-text-color-info: var(--bg);
+  --toastify-text-color-success: var(--bg);
+  --toastify-text-color-warning: var(--bg);
+  --toastify-text-color-error: var(--bg);
+  /* Toastify */
+
+
   display: flex;
   flex-direction: column;
   background: var(--bg);
   color: var(--text);
 }
 
-body.dark {
-  --text: hsl(229, 100%, 95%);
+[data-theme='dark'] body {
   --bg: hsl(231, 12%, 11%);
+  --text: hsl(229, 100%, 95%);
   --transparent: hsla(240, 15%, 22%, 0.5);
+  --transparent-light: hsla(240, 15%, 22%, 0.1);
+  --transparent-dark: hsla(231, 12%, 11%, 0.7);
   --transparent-invert: hsla(240, 42%, 83%, 0.3);
-  --white: hsl(223, 100%, 99%);
-  --black: hsl(227, 20%, 9%);
   --shadow: hsla(240, 20%, 3%, 0.8);
+}
+
+body.dark {
+  /* Dark Mode */
+  --bg: hsl(231, 12%, 11%);
+  --text: hsl(229, 100%, 95%);
+  --transparent: hsla(240, 15%, 22%, 0.5);
+  --transparent-light: hsla(240, 15%, 22%, 0.1);
+  --transparent-dark: hsla(231, 12%, 11%, 0.7);
+  --transparent-invert: hsla(240, 42%, 83%, 0.3);
+  --shadow: hsla(240, 20%, 3%, 0.8);
+  /* Dark Mode */
 }
 
 a {

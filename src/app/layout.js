@@ -1,4 +1,4 @@
-import { ToastContainer, Zoom } from 'react-toastify'
+import { ToastContainer, Slide } from 'react-toastify'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import './globals.css'
@@ -6,6 +6,7 @@ import { Poppins } from 'next/font/google'
 import "react-toastify/dist/ReactToastify.css";
 import Theme from '@/components/Theme'
 import NextAuthSessionProvider from '@/Providers/NextAuthSessionProvider'
+import NextThemeProvider from '@/Providers/NextThemeProvider'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,23 +24,25 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={poppins.className}>
         <NextAuthSessionProvider>
-          <Header />
-          <Theme />
-          {children}
-          <Footer />
-          <ToastContainer position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={true}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            transition={Zoom}
-            // progressStyle=
-            className={"toast_container"}
-            theme="colored" />
+          <NextThemeProvider defaultTheme='system' storageKey='theme' disableTransitionOnChange={true}>
+            <Header />
+            <Theme />
+            {children}
+            <Footer />
+            <ToastContainer position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              transition={Slide}
+              // progressStyle={''}
+              className={"toast_container"}
+              theme="colored" />
+          </NextThemeProvider>
         </NextAuthSessionProvider>
       </body>
     </html>

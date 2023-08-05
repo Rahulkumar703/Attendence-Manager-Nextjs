@@ -45,7 +45,7 @@ main.login {
 }
 
 .extra_links a {
-    color: var(--link);
+    color: var(--info);
     text-decoration: underline;
 }
 
