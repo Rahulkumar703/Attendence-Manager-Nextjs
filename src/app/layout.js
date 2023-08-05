@@ -5,7 +5,7 @@ import './globals.css'
 import { Poppins } from 'next/font/google'
 import "react-toastify/dist/ReactToastify.css";
 import Theme from '@/components/Theme'
-// import NextAuthSessionProvider from '@/Providers/NextAuthSessionProvider'
+import NextAuthSessionProvider from '@/Providers/NextAuthSessionProvider'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,25 +22,25 @@ export default function RootLayout({ children }) {
 
     <html lang="en">
       <body className={poppins.className}>
-        {/* <NextAuthSessionProvider> */}
-        <Header />
-        <Theme />
-        {children}
-        <Footer />
-        <ToastContainer position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          transition={Zoom}
-          // progressStyle=
-          className={"toast_container"}
-          theme="colored" />
-        {/* </NextAuthSessionProvider> */}
+        <NextAuthSessionProvider>
+          <Header />
+          <Theme />
+          {children}
+          <Footer />
+          <ToastContainer position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            transition={Zoom}
+            // progressStyle=
+            className={"toast_container"}
+            theme="colored" />
+        </NextAuthSessionProvider>
       </body>
     </html>
 

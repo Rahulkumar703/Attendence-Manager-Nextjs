@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import Link from "next/link";
 import { BiLogIn } from "react-icons/bi";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 
 
 
@@ -43,10 +43,10 @@ export default function LoginPage() {
 
             if (res.ok) {
                 if (data.type === "success") {
-                    // await signIn('credentials', {
-                    //     redirect: false,
-                    //     ...loginForm,
-                    // });
+                    await signIn('credentials', {
+                        redirect: false,
+                        ...loginForm,
+                    });
 
                     const callbackUrl = params.get('callbackUrl') || '/dashboard';
                     router.push(callbackUrl);

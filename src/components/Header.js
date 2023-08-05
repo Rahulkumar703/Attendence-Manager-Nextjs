@@ -4,12 +4,12 @@ import './Header.css'
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import { BiLogIn, BiLogOut, BiUserCircle } from 'react-icons/bi'
-// import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 
 function Header() {
     const [scroll, setScroll] = useState(false);
-    // const { data } = useSession();
+    const { data } = useSession();
 
     useEffect(() => {
         window.onscroll = () => {
@@ -29,17 +29,16 @@ function Header() {
             <nav>
                 <ul className="nav_list">
                     {
-                        false ?
+                        data?.user ?
                             <>
                                 <li className="nav_items">
                                     <Link href={'/profile'}>
                                         <BiUserCircle size={20} />
-                                        {/* <p>{data?.user?.name.split(' ')[0] || ''}</p> */}
-                                        <p>Hello</p>
+                                        <p>{data?.user?.name.split(' ')[0] || ''}</p>
                                     </Link>
                                 </li>
                                 <li className="nav_items">
-                                    <Link href={''} >
+                                    <Link href={''} onClick={signOut}>
                                         <BiLogOut size={20} />
                                         <p>Log Out</p>
                                     </Link>
