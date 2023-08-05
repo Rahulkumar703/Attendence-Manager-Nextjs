@@ -1,0 +1,96 @@
+main.signup {
+    justify-content: center;
+}
+
+.outer_box {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-self: center;
+    gap: 1.5rem;
+    background: var(--transparent);
+    padding: 1rem;
+    border-radius: 1rem;
+    width: 60%;
+    max-width: 60rem;
+}
+
+.outer_box .box_title {
+    font-size: 3rem;
+    text-decoration: underline;
+}
+
+.outer_box .inner_box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--bg);
+    padding: 2rem 1rem;
+    border-radius: 1rem;
+}
+
+.inner_box .input_section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+}
+
+.input_section .section_heading {
+    font-size: 1.6rem;
+    opacity: .7;
+}
+
+.input_section .section_body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.inner_box .button {
+    width: 100%;
+}
+
+.inner_box .extra_links {
+    margin-left: auto;
+}
+
+.extra_links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.4rem;
+    padding: 1rem;
+}
+
+.extra_links a {
+    color: var(--link);
+    text-decoration: underline;
+}
+
+@media screen and (max-width:900px) {
+    .outer_box {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width:650px) {
+    .outer_box {
+        width: 80%;
+    }
+
+    .inner_box .row {
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width:450px) {
+    .outer_box {
+        width: 100%;
+    }
+
+
+    .extra_links {
+        flex-direction: column;
+    }
+}
