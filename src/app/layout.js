@@ -1,10 +1,10 @@
-// import { ToastContainer, Zoom } from 'react-toastify'
+import { ToastContainer, Zoom } from 'react-toastify'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import './globals.css'
 import { Poppins } from 'next/font/google'
-// import "react-toastify/dist/ReactToastify.css";
-// import Theme from '../Components/Theme'
+import "react-toastify/dist/ReactToastify.css";
+import Theme from '@/components/Theme'
 // import NextAuthSessionProvider from '@/Providers/NextAuthSessionProvider'
 
 const poppins = Poppins({
@@ -24,10 +24,10 @@ export default function RootLayout({ children }) {
       <body className={poppins.className}>
         {/* <NextAuthSessionProvider> */}
         <Header />
-        {/* <Theme /> */}
+        <Theme />
         {children}
         <Footer />
-        {/* <ToastContainer position="top-right"
+        <ToastContainer position="top-right"
           autoClose={3000}
           hideProgressBar={false}
           newestOnTop={true}
@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
           transition={Zoom}
           // progressStyle=
           className={"toast_container"}
-          theme="colored" /> */}
+          theme="colored" />
         {/* </NextAuthSessionProvider> */}
       </body>
     </html>
