@@ -1,0 +1,9 @@
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem 0;
+    margin-top: auto;
+    font-size: 1.4rem;
+    max-height: 3rem;
+}
