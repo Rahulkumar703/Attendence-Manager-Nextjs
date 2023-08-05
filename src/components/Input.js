@@ -1,16 +1,17 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './Input.css';
 import { LiaEye, LiaEyeSlash } from 'react-icons/lia';
 import { BsChevronCompactDown } from 'react-icons/bs';
 
 
 export default function Input({ type, id, label, name, onChange, options, min, max, disabled = false }) {
-    const [value, setValue] = useState();
+    const [value, setValue] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
     const handelChange = (e) => {
+        setValue(e.target.value);
         onChange(e);
     }
     const handleOptionSelect = (value) => {
@@ -83,7 +84,7 @@ export default function Input({ type, id, label, name, onChange, options, min, m
         default:
             return (
                 <div className="input_box">
-                    <input type={type} id={id} name={name} value={value} onChange={handelChange} />
+                    <input type={type} id={id} name={name} value={value} autoComplete={name} onChange={handelChange} />
                     <label htmlFor={id}>{label}</label>
                 </div>
             )
