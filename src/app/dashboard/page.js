@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import Input from '@/Components/Input'
-import Button from '@/Components/Button';
+import Input from '@/components/Input'
+import Button from '@/components/Button';
 import { GrFormAdd, GrFormClose } from 'react-icons/gr';
 import './style.css'
 import { useSession } from 'next-auth/react';
