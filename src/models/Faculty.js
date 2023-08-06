@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 import bcrypt from 'bcrypt'
 
-const UserSchema = mongoose.Schema({
+const FacultySchema = mongoose.Schema({
     name: {
         type: String,
         required: [true, "Please enter your Name."],
         trim: true,
         lowercase: true
     },
-    roll: {
+    userId: {
         type: Number,
-        required: [true, "Please enter your Roll Number."],
+        required: [true, "Please enter your userId."],
         trim: true,
         unique: true
     },
@@ -21,18 +21,19 @@ const UserSchema = mongoose.Schema({
         unique: true,
         lowercase: true
     },
+    department: {
+        type: mongoose.ObjectId,
+        required: [true, "Please enter your Department."],
+        trim: true,
+    },
     password: {
         type: String,
-        required: [true, "Password is required."]
-    },
-    branch: {
-        type: String,
-        required: [true, "Please enter your Branch."],
-        trim: true,
+        required: [true, "Password is required."],
+        select: false
     },
     level: {
         type: Number,
-        default: 1
+        default: 2
     },
     isVarified: {
         type: Boolean,
@@ -50,34 +51,16 @@ const UserSchema = mongoose.Schema({
                     type: Number,
                     required: [true, "Please enter your Semester."],
                     trim: true,
-                },
-                attendence: {
-                    type: [
-                        {
-                            date: {
-                                type: Date,
-                                default: Date.now()
-                            },
-                            present: {
-                                type: Boolean,
-                                default: false
-                            }
-                        }
-                    ]
                 }
             }
         ]
     },
     forgotPasswordToken: String,
-    forgotPasswordTokenExpiry: Date,
     verifyToken: String,
-    verifyTokenExpiry: Date,
-
-}, { timestamps: true });
+})
 
 
-
-UserSchema.pre('save', async function (next) {
+FacultySchema.pre('save', async function (next) {
     if (!this.isModified('password')) next();
 
     // Hash the Password
@@ -88,5 +71,6 @@ UserSchema.pre('save', async function (next) {
 })
 
 
-const User = mongoose.models.user || mongoose.model('user', UserSchema);
-export default User;
+const Faculty = mongoose.models.faculty || mongoose.model('faculty', FacultySchema);
+
+export default Faculty;

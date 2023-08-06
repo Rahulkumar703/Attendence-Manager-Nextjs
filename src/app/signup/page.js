@@ -51,14 +51,15 @@ export default function SignupPage() {
 
         try {
             setIsLoading(true);
+            const { signal } = new AbortController()
             const res = await fetch('/api/signup', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    cache: "no-cache",
                 },
-                body: JSON.stringify(loginForm)
-            });
+                body: JSON.stringify(loginForm),
+                cache: "no-store"
+            }, { signal });
 
             const data = await res.json();
 
@@ -87,42 +88,35 @@ export default function SignupPage() {
                     <div className="row">
                         <div className="input_section">
                             <div className="section_heading">
-                                <h3>College Details:</h3>
-                            </div>
-                            <div className="section_body">
-                                <Input
-                                    type={"number"}
-                                    name={"roll"}
-                                    id={"roll"}
-                                    label={"Roll No."}
-                                    onChange={handleChange}
-                                    min={10000} max={90000} />
-                                <Input
-                                    type={"number"}
-                                    name={"semester"}
-                                    id={"semester"}
-                                    label={"Semester"}
-                                    onChange={handleChange}
-                                    min={1} max={8} />
-                                <Input
-                                    type={"select"}
-                                    options={department}
-                                    name={"branch"}
-                                    id={"branch"}
-                                    label={"Branch"}
-                                    onChange={handleChange}
-                                    disabled={disabled}
-                                />
-                            </div>
-                        </div>
-                        <div className="input_section">
-                            <div className="section_heading">
                                 <h3>Personal Details:</h3>
                             </div>
                             <div className="section_body">
                                 <Input type={"text"} name={"name"} id={"name"} label={"Name"} onChange={handleChange} />
                                 <Input type={"email"} name={"email"} id={"email"} label={"Email"} onChange={handleChange} />
                                 <Input type={"password"} name={"password"} id={"password"} label={"Password"} onChange={handleChange} />
+                            </div>
+                        </div>
+                        <div className="input_section">
+                            <div className="section_heading">
+                                <h3>College Details:</h3>
+                            </div>
+                            <div className="section_body">
+                                <Input
+                                    type={"number"}
+                                    name={"userId"}
+                                    id={"userId"}
+                                    label={"Roll No."}
+                                    onChange={handleChange}
+                                    min={10000} max={90000} />
+                                <Input
+                                    type={"select"}
+                                    options={department}
+                                    name={"department"}
+                                    id={"department"}
+                                    label={"Department"}
+                                    onChange={handleChange}
+                                    disabled={disabled}
+                                />
                             </div>
                         </div>
                     </div>

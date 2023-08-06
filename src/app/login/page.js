@@ -27,6 +27,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const { signal } = new AbortController()
         try {
             setIsLoading(true);
             const res = await fetch('/api/login', {
@@ -35,8 +36,8 @@ export default function LoginPage() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(loginForm),
-                cache: 'no-cache'
-            })
+                cache: 'no-store'
+            }, { signal })
 
             const data = await res.json();
 
@@ -46,11 +47,11 @@ export default function LoginPage() {
                         redirect: false,
                         ...loginForm,
                     });
-                    toast[data.type](data.message);
-                    const callbackUrl = params.get('callbackUrl') || '/dashboard';
+                    const callbackUrl = params.get('callbackUrl') || '/';
                     router.push(callbackUrl);
                 }
             }
+            toast[data.type](data.message);
 
         } catch (error) {
             toast.error(error.message);
@@ -66,7 +67,7 @@ export default function LoginPage() {
             <div className="outer_box login_box">
                 <h3 className="box_title">Login</h3>
                 <form className="inner_box" onSubmit={handleSubmit}>
-                    <Input type={"number"} name={"roll"} id={"roll"} label={"Roll No."} onChange={handleChange} />
+                    <Input type={"number"} name={"userId"} id={"userId"} label={"Roll No."} onChange={handleChange} />
                     <Input type={"password"} name={"password"} id={"password"} label={"Password"} onChange={handleChange} />
                     <div className="extra_links">
                         <Link href={'/forgot'}>forgot password ?</Link>

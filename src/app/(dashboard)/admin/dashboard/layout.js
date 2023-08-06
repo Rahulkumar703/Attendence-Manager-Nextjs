@@ -1,3 +1,4 @@
+import Sidebar from "./Sidebar"
 
 export const metadata = {
     title: 'Dashboard',
@@ -7,7 +8,12 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
 
     return (
-        children
+        <main className="dashboard">
+            <Sidebar />
+            {
+                children
+            }
+        </main>
     )
 
 }

@@ -10,7 +10,7 @@ const DepartmentSchema = mongoose.Schema({
         type: Number,
         required: [true, "Please enter Subject Code."],
         trim: true,
-        // unique: true
+        unique: true
     },
 })
 

@@ -10,9 +10,8 @@ export default function ProfilePage() {
             <main>
                 <h1>Name : {user.name}</h1>
                 <h1>Email : {user.email}</h1>
-                <h1>Branch : {user.branch}</h1>
-                <h1>Roll No. : {user.roll}</h1>
-                <h1>Semester : {user.semester}</h1>
+                <h1>Branch : {user.department.name}</h1>
+                <h1>UserId. : {user.userId}</h1>
             </main>
         )
     }

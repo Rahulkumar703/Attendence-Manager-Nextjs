@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { connection } from 'mongoose'
 
 
 export default async function connect() {
@@ -10,7 +10,6 @@ export default async function connect() {
         }
     )
         .then(() => {
-
             console.log("Database Connected SuccessFully");
         })
         .catch(err => {

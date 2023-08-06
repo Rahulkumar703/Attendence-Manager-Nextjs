@@ -3,8 +3,9 @@ import Link from "next/link"
 import './Header.css'
 import Image from "next/image"
 import { useState } from "react";
-import { BiLogIn, BiLogOut, BiUserCircle } from 'react-icons/bi'
+import { FiLogIn, FiLogOut } from 'react-icons/fi'
 import { signOut, useSession } from "next-auth/react";
+import { PiUserCircleBold } from "react-icons/pi";
 
 
 
@@ -21,13 +22,13 @@ const Navlist = () => {
                     <>
                         <li className="nav_items">
                             <Link href={'/profile'}>
-                                <BiUserCircle size={20} />
+                                <PiUserCircleBold size={20} />
                                 <p>{user && user?.name?.split(' ')[0] || ''}</p>
                             </Link>
                         </li>
                         <li className="nav_items">
                             <Link href={''} onClick={signOut}>
-                                <BiLogOut size={20} />
+                                <FiLogOut size={20} />
                                 <p>Log Out</p>
                             </Link>
                         </li>
@@ -37,7 +38,7 @@ const Navlist = () => {
                 return (
                     <li className="nav_items">
                         <Link href={'login'}>
-                            <BiLogIn size={20} />
+                            <FiLogIn size={20} />
                             <p>Login</p>
                         </Link>
                     </li>

@@ -14,13 +14,14 @@ export default function Input({ type, id, label, name, onChange, options, min, m
         setValue(e.target.value);
         onChange(e);
     }
-    const handleOptionSelect = (value) => {
-        setSelectedValue(value);
+    const handleOptionSelect = (option) => {
+        setSelectedValue(option.name);
         setShowOptions(false);
+        console.log(option);
         const e = {
             target: {
                 name,
-                value
+                value: option._id
             }
         }
         onChange(e);
@@ -57,7 +58,7 @@ export default function Input({ type, id, label, name, onChange, options, min, m
                                 options?.length ?
                                     options?.map((option, index) => {
                                         return (
-                                            <div className="options" key={index} onClick={() => { handleOptionSelect(option.name) }}>
+                                            <div className="options" key={index} onClick={() => { handleOptionSelect(option) }}>
                                                 <p>{option.name}</p>
                                                 <p className='code'>Code : {option.code}</p>
                                             </div>

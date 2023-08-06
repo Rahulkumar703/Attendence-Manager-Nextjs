@@ -1,5 +1,8 @@
 import connect from "@/db/config";
-import User from "@/models/User";
+import Department from "@/models/Department";
+import Faculty from "@/models/Faculty";
+import Student from "@/models/Student";
+import User from "@/models/Student";
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -13,17 +16,29 @@ const handler = NextAuth({
         CredentialsProvider({
             async authorize(credentials, req) {
 
-                const { roll } = credentials;
+                const { userId } = credentials;
 
                 connect();
-
-                // Getting the User Details
-                const user = await User.findOne({ roll }, { password: false })
-                if (user) {
-                    return user;
-                } else {
-                    return null
+                let user = null;
+                // If Logging In a Faculty
+                if (userId && userId.toString().length < 4) {
+                    // Getting the User Details
+                    user = await Faculty.findOne({ userId }, { password: false })
                 }
+                else {
+                    user = await Student.findOne({ userId }, { password: false })
+                    const department = await Department.findById(user.department);
+                    user = { ...user._doc, department };
+                }
+
+                // Fetching department by its ID
+                let department = null;
+                if (user)
+                    department = await Department.findById(user.department);
+
+                user = { ...user._doc, department };
+
+                return user;
             }
         })
     ],
@@ -31,12 +46,11 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.id = user._id;
-                token.branch = user.branch;
+                token._id = user._id;
+                token.department = user.department;
                 token.level = user.level;
                 token.varified = user.isVarified;
-                token.semester = user.semester;
-                token.roll = user.roll;
+                token.userId = user.userId;
             }
             return token;
         },
