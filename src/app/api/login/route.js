@@ -26,13 +26,14 @@ export async function POST(req) {
         if (userId && userId.toString().length < 4) {
 
             // Check if user Exist
-            const user = await Faculty.findOne({ userId });
+            const user = await Faculty.findOne({ userId }, { password: 1 });
             if (!user) {
                 return NextResponse.json(
                     { message: "You are Not registered.", type: "warning" },
                     { status: 404 }
                 );
             }
+
 
             // Verify Password
             const verifyPassword = await bcrypt.compare(password, user.password);
