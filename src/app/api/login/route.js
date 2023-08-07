@@ -53,7 +53,7 @@ export async function POST(req) {
         else {
 
             // Check if user Exist
-            const user = await Student.findOne({ userId });
+            const user = await Student.findOne({ userId }, { password: 1 });
             if (!user) {
                 return NextResponse.json(
                     { message: "You are Not registered.", type: "warning" },
