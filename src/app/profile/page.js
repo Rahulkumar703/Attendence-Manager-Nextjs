@@ -6,6 +6,7 @@ export default function ProfilePage() {
 
     if (session.status === 'authenticated') {
         const { user } = session.data;
+        console.log(user);
         return (
             <main>
                 <h1>Name : {user.name}</h1>

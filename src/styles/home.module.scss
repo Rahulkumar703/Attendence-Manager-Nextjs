@@ -25,39 +25,45 @@
     align-items: center;
     justify-content: center;
     gap: 2rem;
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+        font-size: 1.8rem;
+        color: var(--danger);
+    }
+
+    button {
+        width: 30rem;
+    }
 }
 
-.error_page h1 {
-    font-size: 3rem;
-}
 
-.error_page p {
-    font-size: 1.8rem;
-    color: var(--danger);
-}
-
-.error_page button {
-    width: 30rem;
-}
 
 .not_found {
     align-items: center;
     justify-content: center;
     gap: 2rem;
-}
 
-.not_found h1 {
-    font-size: 3rem;
-    display: flex;
-    gap: 1rem;
-    color: var(--danger);
-}
+    h1 {
+        font-size: 3rem;
+        display: flex;
+        gap: 1rem;
+        color: var(--danger);
 
-.not_found h1 span:first-child {
-    color: var(--text);
-}
+        span {
+            &:first-child {
 
-.not_found h1 span:last-child {
-    color: var(--danger);
+                color: var(--text);
+            }
 
+            &:last-child {
+                color: var(--danger);
+
+            }
+        }
+
+    }
 }

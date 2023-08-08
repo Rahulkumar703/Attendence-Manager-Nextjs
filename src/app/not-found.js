@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import Style from '@/app/page.module.css'
+import Style from '@/styles/home.module.scss'
 import Button from '@/components/Button'
 import { BiArrowBack } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';

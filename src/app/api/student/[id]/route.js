@@ -1,4 +1,4 @@
-import Faculty from "@/models/Faculty";
+import Student from "@/models/Student";
 import { connect } from "mongoose";
 import { NextResponse } from "next/server";
 
@@ -9,14 +9,14 @@ export async function GET(req, { params }) {
     try {
         const { id } = await params;
 
-        const response = await Faculty.findById(id);
+        const response = await Student.findById(id);
         if (response)
             return NextResponse.json(
-                { message: 'Faculty Fetched Successfully', type: 'success', data: response },
+                { message: 'Student Fetched Successfully', type: 'success', data: response },
                 { status: 200 }
             );
         else return NextResponse.json(
-            { message: 'Faculty Not Found', type: 'error' },
+            { message: 'Student Not Found', type: 'error' },
             { status: 404 }
         );
     }

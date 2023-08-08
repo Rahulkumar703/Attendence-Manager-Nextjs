@@ -1,7 +1,7 @@
-import './Footer.css'
+import styles from './styles/Footer.module.scss'
 function Footer() {
     return (
-        <footer>Copyright &copy; 2023.</footer>
+        <footer className={styles.footer}>Copyright &copy; 2023.</footer>
     )
 }
 

@@ -1,9 +1,8 @@
 "use client"
-import { useEffect, useState } from 'react';
-import { PiCloudMoonBold, PiCloudSunBold, PiGearSixBold } from 'react-icons/pi';
-import { HiOutlineDesktopComputer } from 'react-icons/hi';
-import './Theme.css'
+import { useEffect, useRef, useState } from 'react';
+import styles from './styles/Theme.module.scss'
 import { useTheme } from 'next-themes';
+import { FiMonitor, FiMoon, FiSettings, FiSun } from 'react-icons/fi';
 
 
 export default function Theme() {
@@ -13,10 +12,26 @@ export default function Theme() {
     const { theme, setTheme } = useTheme()
     const [mounted, setMounted] = useState(false);
 
+    const themeContainerRef = useRef();
+
+
+    useEffect(() => {
+
+        const handleOutClick = (e) => {
+            if (!themeContainerRef?.current?.contains(e.target)) {
+                setThemeBox(false);
+            }
+        }
+        document.addEventListener('mousedown', handleOutClick)
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutClick)
+        }
+    })
+
     useEffect(() => {
         setMounted(true);
     }, [])
-
 
     const handleClick = (e) => {
         e.target.classList.toggle('spin');
@@ -25,13 +40,13 @@ export default function Theme() {
 
     if (mounted)
         return (
-            <div className='theme_box'>
-                <PiGearSixBold title='Theme' size={20} onClick={handleClick} className='theme_icon' />
-                <div className={`theme_container ${themeBox ? 'active' : ''}`}>
-                    <div className="mode_container">
-                        <PiCloudSunBold title='Light Theme' size={20} className={`mode_icon ${theme === 'light' ? 'active' : ''}`} onClick={() => { setTheme('light') }} />
-                        <HiOutlineDesktopComputer title='System theme' size={20} className={`mode_icon ${theme === 'system' ? 'active' : ''}`} onClick={() => { setTheme('system') }} />
-                        <PiCloudMoonBold title='Dark Theme' size={20} className={`mode_icon ${theme === 'dark' ? 'active' : ''}`} onClick={() => { setTheme('dark') }} />
+            <div className={styles.theme_box} ref={themeContainerRef}>
+                <FiSettings title='Theme' size={20} onClick={handleClick} className={`${styles.theme_icon} ${themeBox ? styles.spin : ''}`} />
+                <div className={`${styles.theme_container} ${themeBox ? styles.active : ''}`}>
+                    <div className={styles.mode_container}>
+                        <FiSun title='Light Theme' size={20} className={`${styles.mode_icon} ${theme === 'light' ? styles.active : ''}`} onClick={() => { setTheme('light') }} />
+                        <FiMonitor title='System theme' size={20} className={`${styles.mode_icon} ${theme === 'system' ? styles.active : ''}`} onClick={() => { setTheme('system') }} />
+                        <FiMoon title='Dark Theme' size={20} className={`${styles.mode_icon} ${theme === 'dark' ? styles.active : ''}`} onClick={() => { setTheme('dark') }} />
                     </div>
                 </div>
             </div>

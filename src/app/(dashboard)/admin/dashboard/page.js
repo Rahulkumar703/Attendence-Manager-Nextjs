@@ -1,12 +1,11 @@
 'use client'
-import './style.css'
-
+import styles from '@/styles/admin_dashboard.module.scss'
 
 
 export default function AdminDashboard() {
 
     return (
-        <section>
+        <section className={styles.section}>
             hello
         </section>
     )

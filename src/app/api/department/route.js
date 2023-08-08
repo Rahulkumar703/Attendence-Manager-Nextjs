@@ -2,14 +2,14 @@ import connect from "@/db/config";
 import Department from "@/models/Department";
 import { NextResponse } from "next/server";
 
-
+connect();
 
 export async function GET() {
 
     try {
-        connect();
+
         // Getting Department data
-        const response = await Department.find();
+        const response = await Department.find().sort({ code: 1 });
         return NextResponse.json({ type: 'success', message: 'department fetched successfully.', department: response }, { status: 200 })
 
     } catch (error) {
@@ -22,7 +22,6 @@ export async function GET() {
 export async function POST(req) {
 
     try {
-        connect();
 
         // Getting Request Body Data
         const reqBody = await req.json();

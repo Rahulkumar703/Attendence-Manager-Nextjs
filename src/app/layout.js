@@ -1,7 +1,7 @@
 import { ToastContainer, Slide } from 'react-toastify'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
-import './globals.css'
+import '@/styles/globals.scss'
 import { Poppins } from 'next/font/google'
 import "react-toastify/dist/ReactToastify.css";
 import Theme from '@/components/Theme'
@@ -21,10 +21,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
 
-    <html lang="en">
-      <body className={poppins.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={poppins.className} >
         <NextAuthSessionProvider>
-          <NextThemeProvider defaultTheme='system' storageKey='theme' disableTransitionOnChange={true}>
+          <NextThemeProvider defaultTheme='system' storageKey='theme' disableTransitionOnChange={true} >
             <Header />
             <Theme />
             {children}

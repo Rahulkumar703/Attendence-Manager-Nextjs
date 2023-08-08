@@ -1,0 +1,224 @@
+main.dashboard {
+    flex-direction: row;
+    position: relative;
+
+    section.section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        margin-left: 11rem;
+        border-radius: .5rem;
+        gap: .5rem;
+
+        .section_heading {
+            font-size: 2rem;
+            text-decoration: underline;
+        }
+
+
+
+        // Manage Faculty 
+        .add_faculty_container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            gap: 1rem;
+
+            .faculty_form_toggler {
+                margin-left: auto;
+            }
+
+            .add_faculty_form_container {
+                padding: 1rem;
+                background: var(--transparent);
+                border-radius: 1rem;
+
+                .form_grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1rem;
+                    padding: 1rem;
+                    background: var(--transparent-dark);
+                    border-radius: 1rem;
+
+                    .input_section {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2rem;
+
+                        .section_heading {
+                            font-size: 1.5rem;
+                            opacity: .8;
+                            text-decoration: underline;
+                        }
+
+                        .section_body {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 1rem;
+                        }
+                    }
+                }
+
+                button {
+                    grid-column: 1/span 2;
+                }
+            }
+
+        }
+
+        .faculty_container {
+            display: flex;
+            flex-direction: column;
+            background: var(--transparent);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: .5rem;
+            gap: 1rem;
+
+            .message {
+                background: var(--bg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                font-size: 1.4rem;
+                width: 100%;
+            }
+
+            .loader {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+
+                .spin {
+                    animation: spin 3s linear infinite;
+                }
+
+                @keyframes spin {
+
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+            }
+
+            .faculty {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                border-radius: 1rem;
+                font-size: 1.5rem;
+                transition: .3s ease-in-out;
+                box-shadow: 0 10px 50px -25px var(--shadow);
+
+                &:hover {
+                    background: var(--transparent-dark);
+                    box-shadow: 0 10px 50px -15px var(--shadow);
+
+                    .actions {
+                        opacity: 1;
+                    }
+                }
+
+                .faculty_id {
+                    font-weight: 600;
+                    opacity: .7;
+                }
+
+                .col {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0 5rem;
+                }
+
+                .faculty_name {
+                    font-weight: 500;
+                    line-height: 1.8rem;
+                    text-transform: capitalize;
+                }
+
+                .faculty_email {
+                    font-weight: 300;
+                    font-size: 1.3rem;
+                    line-height: 1.8rem;
+                    text-align: center;
+                    opacity: .5;
+                }
+
+                .cse {
+                    background: #969af4;
+                }
+
+                .eee {
+                    background: #96f4ee;
+                }
+
+                .civil {
+                    background: #e196f4;
+                }
+
+                .mech {
+                    background: #f496b1;
+                }
+
+                .ai {
+                    background: #96f4ca;
+                }
+
+                .ca {
+                    background: #f4d896;
+                }
+
+                .faculty_department {
+                    display: flex;
+                    justify-content: center;
+                    font-weight: 700;
+                    padding: .5rem 1rem;
+                    border-radius: 1rem;
+                    color: var(--black);
+                }
+
+                .actions {
+                    display: flex;
+                    gap: 1rem;
+                    align-items: center;
+                    justify-content: flex-end;
+                    transition: .3s ease-in-out;
+                    opacity: 0;
+                    margin-left: auto;
+
+                    button {
+                        border: none;
+                        border-radius: .5rem;
+                        font-size: 1.4rem;
+                        cursor: pointer;
+                        transition: .3s ease-in-out;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: .8rem 1.6rem;
+                        background: var(--transparent-dark);
+
+                        &:first-child {
+                            background: var(--info);
+                        }
+
+                        &:last-child {
+                            background: var(--error);
+                        }
+                    }
+                }
+            }
+
+            .message {
+                background: var(--bg);
+                padding: 1rem;
+                border-radius: 1rem;
+            }
+        }
+    }
+}

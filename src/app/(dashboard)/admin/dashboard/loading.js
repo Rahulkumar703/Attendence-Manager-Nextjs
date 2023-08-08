@@ -1,9 +1,9 @@
-import React from 'react'
+import styles from '@/styles/admin_dashboard.module.scss'
 
 export default function loading() {
     return (
-        <main>
+        <section className={styles.section}>
             <h1>Loading...</h1>
-        </main>
+        </section>
     )
 }

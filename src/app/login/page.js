@@ -1,13 +1,13 @@
 "use client"
 import { useState } from "react";
 import Input from "@/components/Input";
-import './style.css'
+import styles from '@/styles/login_signup.module.scss'
 import Button from "@/components/Button";
 import { toast } from 'react-toastify';
 import Link from "next/link";
-import { BiLogIn } from "react-icons/bi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from 'next-auth/react'
+import { FiLogIn } from "react-icons/fi";
 
 
 
@@ -63,18 +63,40 @@ export default function LoginPage() {
 
 
     return (
-        <main className="login">
-            <div className="outer_box login_box">
-                <h3 className="box_title">Login</h3>
-                <form className="inner_box" onSubmit={handleSubmit}>
-                    <Input type={"number"} name={"userId"} id={"userId"} label={"Roll No."} onChange={handleChange} />
-                    <Input type={"password"} name={"password"} id={"password"} label={"Password"} onChange={handleChange} />
-                    <div className="extra_links">
+        <main className={styles.login}>
+            <div className={styles.outer_box}>
+                <h3 className={styles.box_title}>Login</h3>
+                <form className={styles.inner_box} onSubmit={handleSubmit}>
+                    <Input
+                        type={"number"}
+                        name={"userId"}
+                        id={"userId"}
+                        label={"Roll No."}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                    />
+                    <Input
+                        type={"password"}
+                        name={"password"}
+                        id={"password"}
+                        label={"Password"}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                    />
+                    <div className={styles.extra_links}>
                         <Link href={'/forgot'}>forgot password ?</Link>
                     </div>
-                    <Button type="submit" varrient="filled" onClick={handleSubmit} loading={isLoading} icon={<BiLogIn size={20} />}>Login</Button>
+                    <Button
+                        type="submit"
+                        varrient="filled"
+                        onClick={handleSubmit}
+                        loading={isLoading}
+                    >
+                        <FiLogIn size={20} />
+                        Login
+                    </Button>
                 </form>
-                <div className="extra_links">
+                <div className={styles.extra_links}>
                     <p>{"Don't have an account ?"}</p><Link href={'/signup'}>Register now</Link>
                 </div>
             </div>

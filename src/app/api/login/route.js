@@ -4,10 +4,10 @@ import bcrypt from 'bcrypt';
 import Faculty from "@/models/Faculty";
 import Student from "@/models/Student";
 
+connect();
 
 export async function POST(req) {
     try {
-        connect();
         const reqBody = await req.json();
         const { userId, password } = reqBody;
 

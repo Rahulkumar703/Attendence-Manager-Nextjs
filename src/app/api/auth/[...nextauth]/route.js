@@ -23,12 +23,10 @@ const handler = NextAuth({
                 // If Logging In a Faculty
                 if (userId && userId.toString().length < 4) {
                     // Getting the User Details
-                    user = await Faculty.findOne({ userId }, { password: false })
+                    user = await Faculty.findOne({ userId })
                 }
                 else {
-                    user = await Student.findOne({ userId }, { password: false })
-                    const department = await Department.findById(user.department);
-                    user = { ...user._doc, department };
+                    user = await Student.findOne({ userId })
                 }
 
                 // Fetching department by its ID
