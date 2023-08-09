@@ -32,7 +32,7 @@ export default function Faculties() {
             try {
                 const res = await fetch('/api/department', {
                     method: "GET",
-                }, { next: { revalidate: 60 * 60 * 24 } });
+                }, { next: { revalidate: 60 } });
 
                 const data = await res.json();
                 if (data.type === 'success') {
@@ -53,7 +53,7 @@ export default function Faculties() {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                })
+                }, { next: { revalidate: 60 } })
 
                 const data = await res.json();
                 if (res.status === 200) {
