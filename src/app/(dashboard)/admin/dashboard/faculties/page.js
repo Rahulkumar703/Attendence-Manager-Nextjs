@@ -12,7 +12,6 @@ export default function Faculties() {
 
     const session = useSession();
 
-
     const [currentUser, setCurrentUser] = useState();
 
     const [faculties, setFaculties] = useState([]);
@@ -70,15 +69,19 @@ export default function Faculties() {
             }
         }
 
-        getFaculties();
+        // getFaculties();
 
-        getDepartment();
+        // getDepartment();
 
     }, [])
 
     useEffect(() => {
-        if (session?.status === 'authenticated') {
-            setCurrentUser(session?.data?.user)
+        try {
+            if (session?.status === 'authenticated') {
+                setCurrentUser(session?.data?.user)
+            }
+        } catch (error) {
+            console.log(error.message);
         }
     }, [session])
 

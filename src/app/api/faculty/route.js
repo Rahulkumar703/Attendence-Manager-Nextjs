@@ -20,6 +20,7 @@ export async function GET() {
         else return NextResponse.json({ message: 'No faculties Found', type: 'error' }, { status: 404 });
     }
     catch (error) {
+        console.log(error);
         return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
     }
 }

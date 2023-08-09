@@ -82,9 +82,9 @@ export default function Student() {
             }
         }
 
-        getStudents();
+        // getStudents();
 
-        getDepartment();
+        // getDepartment();
 
     }, []);
 
@@ -215,7 +215,7 @@ export default function Student() {
                                                 id={"userId"}
                                                 label={"Student Roll no."}
                                                 onChange={handleChange}
-                                                min={10000} max={90000}
+                                                min={100} max={90000}
                                                 disabled={addStudentLoading}
                                             />
                                             <Input
