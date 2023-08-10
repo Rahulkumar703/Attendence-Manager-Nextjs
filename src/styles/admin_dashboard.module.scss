@@ -1,223 +1,220 @@
-main.dashboard {
-    flex-direction: row;
-    position: relative;
+section.dashboard {
+    display: flex;
+    gap: 1rem;
+}
 
-    section.section {
-        flex: 1;
+.dashboard_section {
+    display: flex;
+    flex-direction: column;
+    margin-left: 9rem;
+    width: 100%;
+    padding: 1rem;
+    gap: 1rem;
+
+    &.loader {
+        display: grid;
+        place-items: center;
+        font-size: 2rem;
+    }
+
+    &>.section_heading {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding: .5rem 1rem;
+
+        .back_btn {
+            cursor: pointer;
+            padding: .5rem;
+            border-radius: .5rem;
+
+            &:hover {
+                background: var(--transparent);
+            }
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-style: double;
+        }
+    }
+
+    .form_container {
         display: flex;
         flex-direction: column;
-        padding: 1rem;
-        margin-left: 11rem;
-        border-radius: .5rem;
-        gap: .5rem;
 
-        .section_heading {
-            font-size: 2rem;
-            text-decoration: underline;
+        .form_toggle_btn {
+            margin-left: auto;
         }
 
+        .form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: .3s ease-in-out;
 
-
-        // Manage Faculty 
-        .add_faculty_container {
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            gap: 1rem;
-
-            .faculty_form_toggler {
-                margin-left: auto;
+            &.row {
+                display: flex;
+                flex-direction: column;
             }
 
-            .add_faculty_form_container {
-                padding: 1rem;
-                background: var(--transparent);
-                border-radius: 1rem;
+            &.active {
+                opacity: 1;
+                height: auto;
+                gap: 1rem;
+                overflow: visible;
+                margin-top: 1rem;
+            }
 
-                .form_grid {
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
+            .form_input_section {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+                .form_heading {
+                    opacity: .8;
+                    font-size: 1.5rem;
+                }
+
+                .form_body {
+                    display: flex;
+                    flex-direction: column;
                     gap: 1rem;
-                    padding: 1rem;
-                    background: var(--transparent-dark);
-                    border-radius: 1rem;
-
-                    .input_section {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 2rem;
-
-                        .section_heading {
-                            font-size: 1.5rem;
-                            opacity: .8;
-                            text-decoration: underline;
-                        }
-
-                        .section_body {
-                            display: flex;
-                            flex-direction: column;
-                            gap: 1rem;
-                        }
-                    }
                 }
 
-                button {
-                    grid-column: 1/span 2;
-                }
             }
 
+            .form_submit_btn {
+                grid-column: 1 / -1;
+            }
         }
+    }
 
-        .faculty_container {
-            display: flex;
-            flex-direction: column;
+    .data_container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .message_container {
             background: var(--transparent);
             padding: 1rem;
             border-radius: 1rem;
-            margin-top: .5rem;
+            display: flex;
             gap: 1rem;
 
+            .spin {
+                animation: spin 3s linear infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+
+            }
+
             .message {
-                background: var(--bg);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 1rem;
-                font-size: 1.4rem;
-                width: 100%;
-            }
-
-            .loader {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 1rem;
-
-                .spin {
-                    animation: spin 3s linear infinite;
-                }
-
-                @keyframes spin {
-
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            }
-
-            .faculty {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                border-radius: 1rem;
                 font-size: 1.5rem;
-                transition: .3s ease-in-out;
-                box-shadow: 0 10px 50px -25px var(--shadow);
+            }
+        }
 
-                &:hover {
-                    background: var(--transparent-dark);
-                    box-shadow: 0 10px 50px -15px var(--shadow);
+        .data {
+            display: flex;
+            width: 100%;
+            font-size: 1.5rem;
+            align-items: center;
+            gap: 2rem;
+            border-bottom: 5px solid var(--transparent-light);
+            padding: 1rem;
+            transition: .3s ease-in-out;
+            border-radius: 1rem;
 
-                    .actions {
-                        opacity: 1;
-                    }
-                }
+            &:hover {
+                box-shadow: 0 1rem 2rem -.5rem var(--shadow);
 
-                .faculty_id {
-                    font-weight: 600;
-                    opacity: .7;
-                }
-
-                .col {
-                    display: flex;
-                    flex-direction: column;
-                    padding: 0 5rem;
-                }
-
-                .faculty_name {
-                    font-weight: 500;
-                    line-height: 1.8rem;
-                    text-transform: capitalize;
-                }
-
-                .faculty_email {
-                    font-weight: 300;
-                    font-size: 1.3rem;
-                    line-height: 1.8rem;
-                    text-align: center;
-                    opacity: .5;
-                }
-
-                .cse {
-                    background: #969af4;
-                }
-
-                .eee {
-                    background: #96f4ee;
-                }
-
-                .civil {
-                    background: #e196f4;
-                }
-
-                .mech {
-                    background: #f496b1;
-                }
-
-                .ai {
-                    background: #96f4ca;
-                }
-
-                .ca {
-                    background: #f4d896;
-                }
-
-                .faculty_department {
-                    display: flex;
-                    justify-content: center;
-                    font-weight: 700;
-                    padding: .5rem 1rem;
-                    border-radius: 1rem;
-                    color: var(--black);
-                }
-
-                .actions {
-                    display: flex;
-                    gap: 1rem;
-                    align-items: center;
-                    justify-content: flex-end;
-                    transition: .3s ease-in-out;
-                    opacity: 0;
-                    margin-left: auto;
-
-                    button {
-                        border: none;
-                        border-radius: .5rem;
-                        font-size: 1.4rem;
-                        cursor: pointer;
-                        transition: .3s ease-in-out;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: .8rem 1.6rem;
-                        background: var(--transparent-dark);
-
-                        &:first-child {
-                            background: var(--info);
-                        }
-
-                        &:last-child {
-                            background: var(--error);
-                        }
-                    }
+                .data_actions {
+                    opacity: 1;
                 }
             }
 
-            .message {
-                background: var(--bg);
-                padding: 1rem;
+            .data_id {
+                font-weight: 800;
+                opacity: .4;
+                letter-spacing: .1rem;
+            }
+
+            .data_name {
+                font-weight: 600;
+                line-height: 1rem;
+            }
+
+            .data_email {
+                font-weight: 400;
+                font-size: 1.4rem;
+                opacity: .8;
+            }
+
+            .data_department {
+                text-transform: uppercase;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-left: 1rem;
+                padding: .5rem 1.6rem;
                 border-radius: 1rem;
+                font-size: 1.2rem;
+                font-weight: 500;
+                color: var(--black);
+
+                &.civil {
+                    background: #e7c27e;
+                }
+
+                &.mech {
+                    background: #b18bf9;
+                }
+
+                &.cse {
+                    background: #f9ac60;
+                }
+
+                &.eee {
+                    background: #7099fa;
+                }
+
+                &.ca {
+                    background: #f49874;
+                }
+
+                &.ai {
+                    background: #f1669c;
+                }
+
+                &.na {
+                    background: var(--error);
+                }
+            }
+
+            .data_actions {
+                margin-left: auto;
+                display: flex;
+                gap: 1rem;
+                opacity: 0;
+                transition: .3s ease-in-out;
+
+                .edit_btn {
+                    background: linear-gradient(to right, #82a4fb, #83cef4);
+                    scale: .9;
+                }
+
+                .delete_btn {
+                    background: linear-gradient(to right, #fb828a, #f49d83);
+                    scale: .9;
+                }
             }
         }
     }

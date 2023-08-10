@@ -128,6 +128,11 @@ main {
   gap: 1rem;
 }
 
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
 svg {
   box-sizing: content-box;
 }

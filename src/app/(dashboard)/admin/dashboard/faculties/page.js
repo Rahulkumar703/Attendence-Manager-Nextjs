@@ -1,12 +1,13 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function Faculties() {
 
@@ -23,11 +24,13 @@ export default function Faculties() {
     const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
     const [fetchFacultiesLoading, setFetchFacultiesLoading] = useState(true);
 
-    const [department, setDepartment] = useState();
+    const [departments, setDepartments] = useState();
+
+    const router = useRouter();
 
     useEffect(() => {
 
-        const getDepartment = async () => {
+        const getDepartments = async () => {
             try {
                 const res = await fetch('/api/department', {
                     method: "GET",
@@ -35,7 +38,7 @@ export default function Faculties() {
 
                 const data = await res.json();
                 if (data.type === 'success') {
-                    setDepartment(data.department);
+                    setDepartments(data.departments);
                 }
             } catch (error) {
                 toast.error(error.message);
@@ -56,7 +59,7 @@ export default function Faculties() {
 
                 const data = await res.json();
                 if (res.status === 200) {
-                    setFaculties(data.data);
+                    setFaculties(data.faculties);
                 }
                 toast[data.type](data.message);
 
@@ -69,9 +72,9 @@ export default function Faculties() {
             }
         }
 
-        // getFaculties();
+        getFaculties();
 
-        // getDepartment();
+        getDepartments();
 
     }, [])
 
@@ -106,7 +109,7 @@ export default function Faculties() {
 
             const data = await res.json();
             if (res.status === 200) {
-                setFaculties(prev => ([...prev, { ...data.data }]))
+                setFaculties(prev => ([...prev, { ...data.faculty }]))
             }
             toast[data.type](data.message);
 
@@ -123,16 +126,16 @@ export default function Faculties() {
 
     const editFaculty = () => { }
 
-    const deleteFaculty = async (userId) => {
+    const deleteFaculty = async (_id) => {
         try {
-            if (userId !== currentUser?.userId) {
+            if (_id !== currentUser?._id) {
 
                 const res = await fetch('/api/faculty', {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ userId })
+                    body: JSON.stringify({ _id })
                 })
 
                 const data = await res.json();
@@ -140,7 +143,7 @@ export default function Faculties() {
                 if (res.status === 200) {
                     setFaculties(prev => {
                         const filteredFaculties = prev.filter(fac => {
-                            return fac.userId !== userId;
+                            return fac._id !== _id;
                         });
                         return filteredFaculties;
                     })
@@ -160,154 +163,155 @@ export default function Faculties() {
 
 
     return (
-        <section className={styles.section}>
-            <h1 className={styles.section_heading}>
-                Manage Faculties
-            </h1>
+        <div className={styles.dashboard_section}>
+            <div className={styles.section_heading}>
+                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
+                <h2>Manage Faculties</h2>
+            </div>
 
-            <div className={styles.add_faculty_container}>
-                <div className={styles.faculty_form_toggler}>
+            <div className={styles.form_container}>
+                <div className={styles.form_toggle_btn}>
                     <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
                         {
                             showForm ?
                                 <>
                                     <FiX size={20} />
-                                    Close
+                                    <p>Close</p>
                                 </>
                                 :
                                 <>
                                     <FiPlus size={20} />
-                                    Add
+                                    <p>Add</p>
                                 </>
                         }
                     </Button>
-
                 </div>
-                {
-                    showForm ?
-                        <div className={styles.add_faculty_form_container}>
-                            <form method="POST" className={styles.form_grid} onSubmit={addFaculty}>
-                                <div>
-                                    <div className={styles.input_section}>
-                                        <h3 className={styles.section_heading}>Personal Details:</h3>
-                                        <div className={styles.section_body}>
-                                            <Input
-                                                type={"text"}
-                                                name={"name"}
-                                                id={"name"}
-                                                label={"Name"}
-                                                onChange={handleChange}
-                                                disabled={addFacultyLoading}
-                                            />
-                                            <Input
-                                                type={"email"}
-                                                name={"email"}
-                                                id={"email"}
-                                                label={"Email"}
-                                                onChange={handleChange}
-                                                disabled={addFacultyLoading}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.input_section}>
-                                        <h3 className={styles.section_heading}>Academic  Details:</h3>
-                                        <div className={styles.section_body}>
-                                            <Input
-                                                type={"number"}
-                                                name={"userId"}
-                                                id={"userId"}
-                                                label={"Faculty Id"}
-                                                onChange={handleChange}
-                                                min={10000} max={90000}
-                                                disabled={addFacultyLoading}
-                                            />
-                                            <Input
-                                                type={"select"}
-                                                options={department}
-                                                name={"department"}
-                                                id={"department"}
-                                                label={"Department"}
-                                                onChange={handleChange}
-                                                disabled={fetchDepartmentLoading}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <Button
-                                    className={styles.button}
-                                    type="submit"
-                                    varrient="filled"
-                                    onClick={addFaculty}
-                                    loading={addFacultyLoading}
-                                >
-                                    <FiUserPlus size={20} />
-                                    Add Faculty
-                                </Button>
-
-                            </form>
+                <form
+                    method="POST"
+                    className={`${styles.form} ${showForm ? styles.active : ''}`}
+                    onSubmit={addFaculty}>
+                    <div>
+                        <div className={styles.form_input_section}>
+                            <h3 className={styles.form_heading}>Personal Details:</h3>
+                            <div className={styles.form_body}>
+                                <Input
+                                    type={"text"}
+                                    name={"name"}
+                                    id={"name"}
+                                    label={"Name"}
+                                    onChange={handleChange}
+                                    disabled={addFacultyLoading}
+                                />
+                                <Input
+                                    type={"email"}
+                                    name={"email"}
+                                    id={"email"}
+                                    label={"Email"}
+                                    onChange={handleChange}
+                                    disabled={addFacultyLoading}
+                                />
+                            </div>
                         </div>
-                        :
-                        null
-                }
+                    </div>
+                    <div>
+                        <div className={styles.form_input_section}>
+                            <h3 className={styles.form_heading}>Academic  Details:</h3>
+                            <div className={styles.form_body}>
+                                <Input
+                                    type={"number"}
+                                    name={"userId"}
+                                    id={"userId"}
+                                    label={"Faculty Id"}
+                                    onChange={handleChange}
+                                    min={10000} max={90000}
+                                    disabled={addFacultyLoading}
+                                />
+                                <Input
+                                    type={"select"}
+                                    options={departments}
+                                    name={"department"}
+                                    id={"department"}
+                                    label={"Department"}
+                                    onChange={handleChange}
+                                    disabled={fetchDepartmentLoading}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <Button
+                        className={styles.form_submit_btn}
+                        type="submit"
+                        varrient="filled"
+                        onClick={addFaculty}
+                        loading={addFacultyLoading}
+                    >
+                        <FiUserPlus size={20} />
+                        Add Faculty
+                    </Button>
+
+                </form>
             </div>
 
-
-            <div className={styles.faculty_container}>
+            <div className={styles.data_container}>
                 {
                     fetchFacultiesLoading ?
-                        <div className={styles.loader}>
+                        <div className={styles.message_container}>
+                            <FiLoader size={20} className={styles.spin} />
                             <p className={styles.message}>
-                                <FiLoader size={20} className={styles.spin} />
                                 Please wait Fetching Faculties...
                             </p>
                         </div>
                         :
                         faculties?.length === 0 ?
-                            <p className={styles.message}>No Faculties are Added</p>
+                            <div className={styles.message_container}>
+                                <FiAlertCircle size={20} />
+                                <p className={styles.message}>
+                                    No Faculties are Added
+                                </p>
+                            </div>
                             :
                             faculties?.map(fac => {
                                 const department = () => {
-                                    let depName = fac.department.name.split(' ');
-                                    depName = depName[depName.length - 1];
+                                    let depName = fac?.department?.name?.split(' ') || [' '];
+                                    depName = depName[depName?.length - 1];
 
                                     switch (depName) {
                                         case "(CSE)":
-                                            depName = "C.S.E";
-                                            return <p className={`${styles.faculty_department} ${styles.cse}`}>{depName}</p>
+                                            depName = "cse";
+                                            return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
                                         case "(CE)":
-                                            depName = "C.E";
-                                            return <p className={`${styles.faculty_department} ${styles.civil}`}>{depName}</p>
+                                            depName = "civil";
+                                            return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
                                         case "(ME)":
-                                            depName = "M.E";
-                                            return <p className={`${styles.faculty_department} ${styles.mech}`}>{depName}</p>
+                                            depName = "mech";
+                                            return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
                                         case "(EEE)":
-                                            depName = "E.E.E";
-                                            return <p className={`${styles.faculty_department} ${styles.eee}`}>{depName}</p>
+                                            depName = "eee";
+                                            return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
                                         case "(CA)":
-                                            depName = "C.A";
-                                            return <p className={`${styles.faculty_department} ${styles.ca}`}>{depName}</p>
+                                            depName = "ca";
+                                            return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
                                         case "(AI)":
-                                            depName = "A.I";
-                                            return <p className={`${styles.faculty_department} ${styles.ai}`}>{depName}</p>
+                                            depName = "ai";
+                                            return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
+                                        default:
+                                            depName = "N/A";
+                                            return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
 
                                     }
                                 }
-                                return <div key={fac._id} className={styles.faculty}>
-                                    <p className={styles.faculty_id}>{fac.userId}</p>
+                                return <div key={fac._id} className={styles.data}>
+                                    <p className={styles.data_id}>{fac.userId}</p>
                                     <div className={styles.col}>
-                                        <p className={styles.faculty_name}>{fac.name}</p>
-                                        <p className={styles.faculty_email}>{fac.email}</p>
+                                        <p className={styles.data_name}>{fac.name}</p>
+                                        <p className={styles.data_email}>{fac.email}</p>
                                     </div>
-                                    <p className={styles.faculty_department}>
-                                        {department()}
-                                    </p>
-                                    <div className={styles.actions}>
-                                        <Button type="button" varrient="filled" onClick={() => { editFaculty(fac.userId) }}>
+                                    {department()}
+                                    <div className={styles.data_actions}>
+                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editFaculty(fac._id) }}>
                                             <FiEdit3 size={20} />
                                         </Button>
-                                        <Button type="button" varrient="filled" onClick={() => { deleteFaculty(fac.userId) }}>
+                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteFaculty(fac._id) }}>
                                             <AiOutlineDelete size={20} />
                                         </Button>
                                     </div>
@@ -317,6 +321,6 @@ export default function Faculties() {
                 }
             </div>
 
-        </section>
+        </div>
     )
 }

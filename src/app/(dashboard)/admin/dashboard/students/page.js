@@ -1,36 +1,16 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
+import { useRouter } from 'next/navigation'
 
 export default function Student() {
 
-    const [students, setStudents] = useState([
-        {
-            classes: [],
-            department: { _id: '64cfdd92c7d06ec62a904e54', name: 'Computer Science Engineering (CSE)', code: 105 },
-            email: "golusir@gmail.com",
-            isVarified: false,
-            level: 2,
-            name: "golu",
-            userId: 999,
-            _id: "64d278ff3dfbd7a316b0ffa8"
-        },
-        {
-            classes: [],
-            department: { _id: '64cfdd92c7d06ec62a904e54', name: 'Computer Science Engineering (CSE)', code: 105 },
-            email: "golusir@gmail.com",
-            isVarified: false,
-            level: 2,
-            name: "golu",
-            userId: 999,
-            _id: "64d278ff3dfbd7a316b0ffa8"
-        }
-    ]);
+    const [students, setStudents] = useState([]);
 
     const [showForm, setShowForm] = useState(false);
     const [studentForm, setStudentForm] = useState({});
@@ -39,18 +19,20 @@ export default function Student() {
     const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
     const [fetchStudentsLoading, setFetchStudentsLoading] = useState(true);
 
-    const [department, setDepartment] = useState();
+    const [departments, setDepartments] = useState();
+
+    const router = useRouter();
 
     useEffect(() => {
-        const getDepartment = async () => {
+        const getDepartments = async () => {
             try {
                 const res = await fetch('/api/department', {
                     method: "GET",
-                }, { next: { revalidate: 60 } });
+                }, { next: { revalidate: 24 * 60 * 60 } });
 
                 const data = await res.json();
                 if (data.type === 'success') {
-                    setDepartment(data.department);
+                    setDepartments(data.departments);
                 }
             } catch (error) {
                 toast.error(error.message);
@@ -66,11 +48,11 @@ export default function Student() {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }, { next: { revalidate: 60 } })
+                }, { next: { revalidate: 24 * 60 * 60 } })
 
                 const data = await res.json();
                 if (res.status === 200)
-                    setStudents(data.data);
+                    setStudents(data.students);
                 toast[data.type](data.message);
 
 
@@ -82,9 +64,9 @@ export default function Student() {
             }
         }
 
-        // getStudents();
+        getStudents();
 
-        // getDepartment();
+        getDepartments();
 
     }, []);
 
@@ -109,7 +91,8 @@ export default function Student() {
 
             const data = await res.json();
             if (res.status === 200) {
-                setStudents(prev => ([...prev, { ...data.data }]))
+                setStudents(prev => ([...prev, { ...data.student }]));
+                setShowForm(false);
             }
             toast[data.type](data.message);
 
@@ -118,20 +101,19 @@ export default function Student() {
         }
         finally {
             setAddStudentLoading(false);
-            setShowForm(false);
         }
 
     }
 
     const editStudent = () => { }
-    const deleteStudent = async (userId) => {
+    const deleteStudent = async (_id) => {
         try {
             const res = await fetch('/api/student', {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ userId })
+                body: JSON.stringify({ _id })
             })
 
             const data = await res.json();
@@ -139,7 +121,7 @@ export default function Student() {
             if (res.status === 200) {
                 setStudents(prev => {
                     const filteredStudents = prev.filter(stu => {
-                        return stu.userId !== userId;
+                        return stu._id !== _id;
                     });
                     return filteredStudents;
                 })
@@ -155,154 +137,158 @@ export default function Student() {
 
 
     return (
-        <section className={styles.section}>
-            <h1 className={styles.section_heading}>
-                Manage Students
-            </h1>
+        <div className={styles.dashboard_section}>
+            <div className={styles.section_heading}>
+                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
+                <h2>Manage Students</h2>
+            </div>
 
-            <div className={styles.add_faculty_container}>
-                <div className={styles.faculty_form_toggler}>
+            <div className={styles.form_container}>
+                <div className={styles.form_toggle_btn}>
                     <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
                         {
                             showForm ?
                                 <>
                                     <FiX size={20} />
-                                    Close
+                                    <p>Close</p>
                                 </>
                                 :
                                 <>
                                     <FiPlus size={20} />
-                                    Add
+                                    <p>Add</p>
                                 </>
                         }
                     </Button>
 
                 </div>
-                {
-                    showForm ?
-                        <div className={styles.add_faculty_form_container}>
-                            <form method="POST" className={styles.form_grid} onSubmit={addStudent}>
-                                <div>
-                                    <div className={styles.input_section}>
-                                        <h3 className={styles.section_heading}>Personal Details:</h3>
-                                        <div className={styles.section_body}>
-                                            <Input
-                                                type={"text"}
-                                                name={"name"}
-                                                id={"name"}
-                                                label={"Name"}
-                                                onChange={handleChange}
-                                                disabled={addStudentLoading}
-                                            />
-                                            <Input
-                                                type={"email"}
-                                                name={"email"}
-                                                id={"email"}
-                                                label={"Email"}
-                                                onChange={handleChange}
-                                                disabled={addStudentLoading}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={styles.input_section}>
-                                        <h3 className={styles.section_heading}>Academic  Details:</h3>
-                                        <div className={styles.section_body}>
-                                            <Input
-                                                type={"number"}
-                                                name={"userId"}
-                                                id={"userId"}
-                                                label={"Student Roll no."}
-                                                onChange={handleChange}
-                                                min={100} max={90000}
-                                                disabled={addStudentLoading}
-                                            />
-                                            <Input
-                                                type={"select"}
-                                                options={department}
-                                                name={"department"}
-                                                id={"department"}
-                                                label={"Branch"}
-                                                onChange={handleChange}
-                                                disabled={fetchDepartmentLoading}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <Button
-                                    className={styles.button}
-                                    type="submit"
-                                    varrient="filled"
-                                    onClick={addStudent}
-                                    loading={addStudentLoading}
-                                >
-                                    <FiUserPlus size={20} />
-                                    Add Student
-                                </Button>
-
-                            </form>
+                <form
+                    method="POST"
+                    className={`${styles.form} ${showForm ? styles.active : ''}`}
+                    onSubmit={addStudent}
+                >
+                    <div>
+                        <div className={styles.form_input_section}>
+                            <h3 className={styles.form_heading}>Personal Details:</h3>
+                            <div className={styles.form_body}>
+                                <Input
+                                    type={"text"}
+                                    name={"name"}
+                                    id={"name"}
+                                    label={"Name"}
+                                    onChange={handleChange}
+                                    disabled={addStudentLoading}
+                                />
+                                <Input
+                                    type={"email"}
+                                    name={"email"}
+                                    id={"email"}
+                                    label={"Email"}
+                                    onChange={handleChange}
+                                    disabled={addStudentLoading}
+                                />
+                            </div>
                         </div>
-                        :
-                        null
-                }
+                    </div>
+                    <div>
+                        <div className={styles.form_input_section}>
+                            <h3 className={styles.form_heading}>Academic  Details:</h3>
+                            <div className={styles.form_body}>
+                                <Input
+                                    type={"number"}
+                                    name={"userId"}
+                                    id={"userId"}
+                                    label={"Student Roll no."}
+                                    onChange={handleChange}
+                                    min={100} max={90000}
+                                    disabled={addStudentLoading}
+                                />
+                                <Input
+                                    type={"select"}
+                                    options={departments}
+                                    name={"department"}
+                                    id={"department"}
+                                    label={"Branch"}
+                                    onChange={handleChange}
+                                    disabled={fetchDepartmentLoading}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <Button
+                        className={styles.form_submit_btn}
+                        type="submit"
+                        varrient="filled"
+                        onClick={addStudent}
+                        loading={addStudentLoading}
+                    >
+                        <FiUserPlus size={20} />
+                        Add Student
+                    </Button>
+
+                </form>
             </div>
 
 
-            <div className={styles.faculty_container}>
+            <div className={styles.data_container}>
                 {
                     fetchStudentsLoading ?
-                        <div className={styles.loader}>
+                        <div className={styles.message_container}>
+                            <FiLoader size={20} className={styles.spin} />
                             <p className={styles.message}>
-                                <FiLoader size={20} className={styles.spin} />
                                 Please wait Fetching Students...
                             </p>
                         </div>
                         :
                         students?.length === 0 ?
-                            <p className={styles.message}>No Students are Added</p>
+                            <div className={styles.message_container}>
+                                <FiAlertCircle size={20} />
+                                <p className={styles.message}>
+                                    No Students are Added, Please add first.
+                                </p>
+                            </div>
                             :
                             students?.map(stu => {
                                 const department = () => {
-                                    let depName = stu.department.name.split(' ');
-                                    depName = depName[depName.length - 1];
+                                    let depName = stu?.department?.name?.split(' ') || [' '];
+                                    depName = depName[depName?.length - 1];
 
                                     switch (depName) {
                                         case "(CSE)":
-                                            depName = "C.S.E";
-                                            return <p className={`${styles.faculty_department} ${styles.cse}`}>{depName}</p>
+                                            depName = "cse";
+                                            return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
                                         case "(CE)":
-                                            depName = "C.E";
-                                            return <p className={`${styles.faculty_department} ${styles.civil}`}>{depName}</p>
+                                            depName = "civil";
+                                            return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
                                         case "(ME)":
-                                            depName = "M.E";
-                                            return <p className={`${styles.faculty_department} ${styles.mech}`}>{depName}</p>
+                                            depName = "mech";
+                                            return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
                                         case "(EEE)":
-                                            depName = "E.E.E";
-                                            return <p className={`${styles.faculty_department} ${styles.eee}`}>{depName}</p>
+                                            depName = "eee";
+                                            return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
                                         case "(CA)":
-                                            depName = "C.A";
-                                            return <p className={`${styles.faculty_department} ${styles.ca}`}>{depName}</p>
+                                            depName = "ca";
+                                            return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
                                         case "(AI)":
-                                            depName = "A.I";
-                                            return <p className={`${styles.faculty_department} ${styles.ai}`}>{depName}</p>
+                                            depName = "ai";
+                                            return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
+                                        default:
+                                            depName = "N/A";
+                                            return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
 
                                     }
                                 }
-                                return <div key={stu._id} className={styles.faculty}>
-                                    <p className={styles.faculty_id}>{stu.userId}</p>
-                                    <div className={styles.col}>
-                                        <p className={styles.faculty_name}>{stu.name}</p>
-                                        <p className={styles.faculty_email}>{stu.email}</p>
+                                return <div key={stu._id} className={`${styles.data}`}>
+                                    <p className={styles.data_id}>{stu.userId}</p>
+                                    <div>
+                                        <p className={styles.data_name}>{stu.name}</p>
+                                        <p className={styles.data_email}>{stu.email}</p>
                                     </div>
-                                    <p className={styles.faculty_department}>
-                                        {department()}
-                                    </p>
-                                    <div className={styles.actions}>
-                                        <Button type="button" varrient="filled" onClick={editStudent}>
+                                    {department()}
+                                    <div className={styles.data_actions}>
+                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editStudent(stu._id) }}>
                                             <FiEdit3 size={20} />
                                         </Button>
-                                        <Button type="button" varrient="filled" onClick={() => { deleteStudent(stu.userId) }}>
+                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteStudent(stu._id) }}>
                                             <AiOutlineDelete size={20} />
                                         </Button>
                                     </div>
@@ -312,6 +298,6 @@ export default function Student() {
                 }
             </div>
 
-        </section>
+        </div>
     )
 }

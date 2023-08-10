@@ -14,6 +14,7 @@ import { FiLogIn } from "react-icons/fi";
 
 export default function LoginPage() {
 
+
     const router = useRouter();
     const params = useSearchParams();
 
@@ -47,7 +48,8 @@ export default function LoginPage() {
                         redirect: false,
                         ...loginForm,
                     });
-                    const callbackUrl = params.get('callbackUrl') || '/';
+
+                    const callbackUrl = params.get('callbackUrl') || 'student/dashboard';
                     router.push(callbackUrl);
                 }
             }
@@ -63,7 +65,7 @@ export default function LoginPage() {
 
 
     return (
-        <main className={styles.login}>
+        <div className={styles.login}>
             <div className={styles.outer_box}>
                 <h3 className={styles.box_title}>Login</h3>
                 <form className={styles.inner_box} onSubmit={handleSubmit}>
@@ -100,6 +102,6 @@ export default function LoginPage() {
                     <p>{"Don't have an account ?"}</p><Link href={'/signup'}>Register now</Link>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

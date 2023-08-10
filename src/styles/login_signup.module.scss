@@ -1,10 +1,11 @@
-main.signup {
-    justify-content: center;
+.signup,
+.login {
+    display: grid;
+    place-items: center;
+    margin: auto 0;
+    position: relative;
 }
 
-main.login {
-    justify-content: center;
-}
 
 .outer_box {
     display: flex;

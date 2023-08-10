@@ -12,6 +12,7 @@
         border-radius: .5rem;
         border: none;
         padding: .5rem 1rem;
+        font-weight: 400;
         font-family: inherit;
         background: var(--transparent);
         color: var(--text);
@@ -55,7 +56,7 @@
         font-size: 1.2rem;
         opacity: .7;
         margin-left: .5rem;
-        font-weight: 600;
+        font-weight: 500;
         font-family: inherit;
     }
 
@@ -69,10 +70,10 @@
 
         .dropdown_icon {
             position: absolute;
-            top: 1px;
-            right: 1px;
-            width: calc(4rem - 2px);
-            height: calc(4rem - 2px);
+            top: 2px;
+            right: 2px;
+            width: calc(4rem - 4px);
+            height: calc(4rem - 4px);
             border-radius: .5rem;
             transition: .3s ease-in-out;
             pointer-events: none;
@@ -105,7 +106,22 @@
             opacity: 0;
             transition: .3s ease-in-out;
             pointer-events: none;
-            overflow: hidden;
+            max-height: 20rem;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: .7rem;
+            }
+
+            &::-webkit-scrollbar-track {
+                border-radius: 1rem;
+                background: var(--transparent);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 1rem;
+                background: var(--bg);
+            }
 
             &.active {
                 opacity: 1;

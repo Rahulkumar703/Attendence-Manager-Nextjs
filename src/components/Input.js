@@ -68,7 +68,12 @@ export default function Input({ type, id, label, name, onChange, options, min, m
             return (
                 <div className={styles.input_box}>
                     <div className={styles.custom_selectbox} ref={selectContainerRef}>
-                        <input className={styles.select_input} type="text" name={name} id={id} placeholder='Select your Branch' value={selectedValue} readOnly onClick={toggleOptions} disabled={disabled} />
+                        <input className={styles.select_input}
+                            type="text" name={name}
+                            id={id} placeholder={disabled ? 'Please wait...' : 'Select your Branch'}
+                            value={selectedValue} readOnly
+                            onClick={toggleOptions}
+                            disabled={disabled} />
                         <div className={styles.dropdown_icon}>
                             <FiChevronDown size={20} className={styles.icon} />
                         </div>

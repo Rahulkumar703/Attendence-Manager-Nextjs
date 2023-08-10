@@ -17,7 +17,7 @@ const middleware = async (req) => {
             return NextResponse.redirect(new URL(`/login?callbackUrl=${pathname}`, req.url));
         }
 
-        const roleBasedPath = pathname.includes('/admin') || pathname.includes('/faculty') || pathname.includes('/student');
+        const roleBasedPath = pathname.includes('/admin') || pathname.includes('/faculty') || pathname.includes('/student') || pathname.includes('/dashboard');
 
         if ((publicUrl && token) || roleBasedPath) {
             if (token.level === 3 && !pathname.includes('admin/dashboard'))

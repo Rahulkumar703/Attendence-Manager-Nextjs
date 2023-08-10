@@ -15,7 +15,7 @@ export async function GET() {
                 return { ...res._doc, department };
             }));
 
-            return NextResponse.json({ message: 'Faculties Fetched Successfully', type: 'success', data: data }, { status: 200 });
+            return NextResponse.json({ message: 'Faculties Fetched Successfully', type: 'success', faculties: data }, { status: 200 });
         }
         else return NextResponse.json({ message: 'No faculties Found', type: 'error' }, { status: 404 });
     }
@@ -60,7 +60,7 @@ export async function POST(req) {
 
         // returning response
         return NextResponse.json(
-            { message: "Faculty Added Successfully", type: 'success', data: newUser },
+            { message: "Faculty Added Successfully", type: 'success', faculty: newUser },
             { status: 200 }
         );
 
@@ -75,10 +75,10 @@ export async function DELETE(req) {
         connect();
 
         const reqBody = await req.json();
-        const { userId } = reqBody;
+        const { _id } = reqBody;
 
         // Check if User exist
-        const user = await Faculty.findOne({ userId });
+        const user = await Faculty.findOne({ _id });
 
         if (!user) {
             return NextResponse.json(
@@ -88,7 +88,7 @@ export async function DELETE(req) {
         }
 
         // Delete The User
-        const deletedUser = await Faculty.deleteOne({ userId })
+        const deletedUser = await Faculty.deleteOne({ _id })
 
         // returning response
         if (deletedUser)

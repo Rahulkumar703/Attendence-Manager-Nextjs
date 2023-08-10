@@ -8,19 +8,19 @@ export default function ProfilePage() {
         const { user } = session.data;
         console.log(user);
         return (
-            <main>
+            <div>
                 <h1>Name : {user.name}</h1>
                 <h1>Email : {user.email}</h1>
                 <h1>Branch : {user.department.name}</h1>
                 <h1>UserId. : {user.userId}</h1>
-            </main>
+            </div>
         )
     }
     else {
         return (
-            <main>
+            <div>
                 <h1>Loading...</h1>
-            </main>
+            </div>
         )
     }
 }

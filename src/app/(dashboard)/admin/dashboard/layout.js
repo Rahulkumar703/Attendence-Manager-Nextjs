@@ -1,6 +1,7 @@
 import Sidebar from '@/components/Sidebar';
 import styles from '@/styles/admin_dashboard.module.scss'
 import { FaChalkboardTeacher } from 'react-icons/fa';
+import { FiBook } from 'react-icons/fi';
 import { LuLayoutDashboard } from 'react-icons/lu';
 import { PiBookBold, PiBuildingsBold, PiStudentBold } from 'react-icons/pi';
 import { SiGoogleclassroom } from 'react-icons/si';
@@ -30,7 +31,7 @@ export default function DashboardLayout({ children }) {
         },
         {
             name: "Manage Subjects",
-            icon: <PiBookBold size={20} />,
+            icon: <FiBook size={20} />,
             href: "/admin/dashboard/subjects"
         },
         {
@@ -46,12 +47,12 @@ export default function DashboardLayout({ children }) {
     ]
 
     return (
-        <main className={styles.dashboard}>
+        <section className={styles.dashboard}>
             <Sidebar links={SidebarLinks} />
             {
                 children
             }
-        </main>
+        </section>
     )
 
 }

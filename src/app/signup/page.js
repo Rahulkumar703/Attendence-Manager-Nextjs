@@ -81,7 +81,7 @@ export default function SignupPage() {
 
 
     return (
-        <main className={styles.signup}>
+        <div className={styles.signup}>
             <div className={styles.outer_box}>
                 <h3 className={styles.box_title}>Signup</h3>
                 <form method="POST" className={styles.inner_box} onSubmit={handleSubmit}>
@@ -162,6 +162,6 @@ export default function SignupPage() {
                     <p>{"Already have an account ?"}</p><Link href={'/login'}>Login here</Link>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

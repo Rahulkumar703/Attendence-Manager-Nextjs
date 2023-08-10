@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-const DepartmentSchema = mongoose.Schema({
+const SubjectSchema = mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Please enter Department name."],
+        required: [true, "Please enter Subject name."],
         trim: true,
     },
     code: {
@@ -14,5 +14,5 @@ const DepartmentSchema = mongoose.Schema({
     },
 })
 
-const Department = mongoose.models.department || mongoose.model('department', DepartmentSchema);
-export default Department;
+const Subject = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);
+export default Subject;

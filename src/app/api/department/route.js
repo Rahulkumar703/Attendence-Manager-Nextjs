@@ -10,7 +10,7 @@ export async function GET() {
 
         // Getting Department data
         const response = await Department.find().sort({ code: 1 });
-        return NextResponse.json({ type: 'success', message: 'department fetched successfully.', department: response }, { status: 200 })
+        return NextResponse.json({ type: 'success', message: 'department fetched successfully.', departments: response }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({ message: error.message, type: 'error' }, { status: 500 })
@@ -38,5 +38,38 @@ export async function POST(req) {
 
     } catch (error) {
         return NextResponse.json({ message: error.message, type: 'error' }, { status: 500 })
+    }
+}
+
+
+export async function DELETE(req) {
+    try {
+        connect();
+
+        const reqBody = await req.json();
+        const { _id } = reqBody;
+
+        // Check if Department exist
+        const subject = await Department.findOne({ _id });
+
+        if (!subject) {
+            return NextResponse.json(
+                { message: "Department Not Found", type: "error" },
+                { status: 404 }
+            );
+        }
+
+        // Delete The Department
+        const deletedDepartment = await Department.deleteOne({ _id })
+
+        // returning response
+        if (deletedDepartment)
+            return NextResponse.json({
+                message: "Department Deleted Successfully", type: 'success'
+            }, { status: 200 });
+
+    }
+    catch (error) {
+        return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
     }
 }
