@@ -2,7 +2,6 @@ import connect from "@/db/config";
 import Department from "@/models/Department";
 import Faculty from "@/models/Faculty";
 import Student from "@/models/Student";
-import User from "@/models/Student";
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 

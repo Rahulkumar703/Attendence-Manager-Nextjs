@@ -1,6 +1,6 @@
 import Department from "@/models/Department";
 import Student from "@/models/Student";
-import { connect } from "mongoose";
+import connect from "@/db/config";
 import { NextResponse } from "next/server";
 
 connect();
