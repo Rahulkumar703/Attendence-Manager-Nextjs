@@ -57,7 +57,7 @@ const FacultySchema = mongoose.Schema({
     },
     forgotPasswordToken: String,
     verifyToken: String,
-})
+}, { timestamps: true })
 
 
 FacultySchema.pre('save', async function (next) {

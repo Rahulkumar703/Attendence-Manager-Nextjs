@@ -4,11 +4,24 @@ import styles from './styles/Input.module.scss';
 import { FiChevronDown, FiEye, FiEyeOff } from 'react-icons/fi';
 
 
-export default function Input({ type, id, label, name, onChange, options, min, max, disabled = false }) {
-    const [value, setValue] = useState('');
+export default function Input(
+    {
+        type,
+        id,
+        label,
+        name,
+        options,
+        disabled = false,
+        value,
+        onChange
+    }
+) {
+
+
+
     const [showPassword, setShowPassword] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
-    const [selectedValue, setSelectedValue] = useState('');
+
 
 
     const selectContainerRef = useRef();
@@ -28,19 +41,21 @@ export default function Input({ type, id, label, name, onChange, options, min, m
         }
     })
 
+
     const handelChange = (e) => {
-        setValue(e.target.value);
         onChange(e);
     }
 
 
     const handleOptionSelect = (option) => {
-        setSelectedValue(option.name);
         setShowOptions(false);
         const e = {
             target: {
                 name,
-                value: option._id
+                value: {
+                    _id: option._id,
+                    name: option.name
+                }
             }
         }
         onChange(e);
@@ -53,7 +68,15 @@ export default function Input({ type, id, label, name, onChange, options, min, m
         case "password":
             return (
                 <div className={`${styles.input_box} ${styles.icon}`}>
-                    <input type={showPassword ? 'text' : type} id={id} name={name} value={value} autoComplete={name} onChange={handelChange} disabled={disabled} />
+                    <input
+                        type={showPassword ? 'text' : type}
+                        id={id}
+                        name={name}
+                        value={value}
+                        autoComplete={name}
+                        onChange={handelChange}
+                        disabled={disabled}
+                    />
                     <label htmlFor={id}>{label}</label>
                     <div className={styles.eye_icon} onClick={() => { setShowPassword(prev => !prev) }}>
                         {
@@ -71,13 +94,15 @@ export default function Input({ type, id, label, name, onChange, options, min, m
                         <input className={styles.select_input}
                             type="text" name={name}
                             id={id} placeholder={disabled ? 'Please wait...' : 'Select your Branch'}
-                            value={selectedValue} readOnly
+                            value={value}
+                            readOnly
                             onClick={toggleOptions}
-                            disabled={disabled} />
+                            disabled={disabled}
+                        />
                         <div className={styles.dropdown_icon}>
                             <FiChevronDown size={20} className={styles.icon} />
                         </div>
-                        <div className={`${styles.option_box} ${showOptions ? styles.active : null}`}>
+                        <div className={`${styles.option_box} ${showOptions ? styles.active : ''}`}>
                             {
                                 options?.length ?
                                     options?.map((option, index) => {
@@ -102,14 +127,30 @@ export default function Input({ type, id, label, name, onChange, options, min, m
         case "number":
             return (
                 <div className={styles.input_box}>
-                    <input type={type} id={id} name={name} value={value} autoComplete={name} onChange={handelChange} min={min} max={max} disabled={disabled} />
+                    <input
+                        type={type}
+                        id={id}
+                        name={name}
+                        value={value}
+                        autoComplete={name}
+                        onChange={handelChange}
+                        disabled={disabled}
+                    />
                     <label htmlFor={id}>{label}</label>
                 </div>
             )
         default:
             return (
                 <div className={styles.input_box}>
-                    <input type={type} id={id} name={name} value={value} autoComplete={name} onChange={handelChange} disabled={disabled} />
+                    <input
+                        type={type}
+                        id={id}
+                        name={name}
+                        value={value}
+                        autoComplete={name}
+                        onChange={handelChange}
+                        disabled={disabled}
+                    />
                     <label htmlFor={id}>{label}</label>
                 </div>
             )

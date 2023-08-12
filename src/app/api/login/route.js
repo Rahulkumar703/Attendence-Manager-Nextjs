@@ -12,6 +12,7 @@ export async function POST(req) {
         const { userId, password } = reqBody;
 
 
+
         // Validating Request Body
         if (!userId || !password) {
             return NextResponse.json(

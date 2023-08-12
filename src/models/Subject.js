@@ -12,7 +12,7 @@ const SubjectSchema = mongoose.Schema({
         trim: true,
         unique: true
     },
-})
+}, { timestamps: true })
 
 const Subject = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);
 export default Subject;

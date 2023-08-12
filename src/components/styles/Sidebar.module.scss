@@ -35,10 +35,11 @@
             justify-content: start;
             gap: 1rem;
             margin-left: 2rem;
+            padding: 0 1rem;
 
             &:hover {
 
-                padding: 0 1rem;
+                padding: 0 1.5rem;
             }
 
             p {
@@ -75,6 +76,13 @@
         transition: .3s ease-in-out;
         border-radius: .5rem;
         overflow: hidden;
+        padding: 0;
+        border-left: 2px solid transparent;
+
+        &.active {
+            border-left: 2px solid var(--text);
+            background: var(--transparent);
+        }
 
         &:hover {
             background: var(--transparent-invert);

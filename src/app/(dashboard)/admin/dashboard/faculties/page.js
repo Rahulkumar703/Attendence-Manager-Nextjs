@@ -1,7 +1,7 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
@@ -18,13 +18,23 @@ export default function Faculties() {
     const [faculties, setFaculties] = useState([]);
 
     const [showForm, setShowForm] = useState(false);
-    const [facultyForm, setFacultyForm] = useState({});
+    const [facultyForm, setFacultyForm] = useState({
+        name: '',
+        email: '',
+        userId: '',
+        department: { _id: '', name: '' }
+    });
+    const [isUpdate, setIsUpdate] = useState(false);
 
     const [addFacultyLoading, setAddFacultyLoading] = useState(false);
     const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
     const [fetchFacultiesLoading, setFetchFacultiesLoading] = useState(true);
 
     const [departments, setDepartments] = useState();
+    const [deleteFaculty, setDeleteFaculty] = useState({
+        popup: false,
+        _id: ''
+    });
 
     const router = useRouter();
 
@@ -41,7 +51,7 @@ export default function Faculties() {
                     setDepartments(data.departments);
                 }
             } catch (error) {
-                toast.error(error.message);
+                toast.error(error.message, { toastId: 'getDepartmentError' });
             }
             finally {
                 setFetchDepartmentLoading(false);
@@ -61,11 +71,11 @@ export default function Faculties() {
                 if (res.status === 200) {
                     setFaculties(data.faculties);
                 }
-                toast[data.type](data.message);
+                toast[data.type](data.message, { toastId: 'getFaculty' });
 
 
             } catch (error) {
-                toast.error(data.message);
+                toast.error(error.message, { toastId: 'getFacultyError' });
             }
             finally {
                 setFetchFacultiesLoading(false);
@@ -92,29 +102,56 @@ export default function Faculties() {
         setFacultyForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const addFaculty = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+
+            if (facultyForm.name === '' || facultyForm.email === '' || facultyForm.userId === '' || facultyForm.department === '') {
+                toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
+                return;
+            }
+
             setAddFacultyLoading(true);
             const { signal } = new AbortController()
+            const method = isUpdate ? 'PUT' : 'POST';
             const res = await fetch('/api/faculty', {
-                method: "POST",
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...facultyForm, password: facultyForm.userId }),
+                body: JSON.stringify(
+                    {
+                        ...facultyForm,
+                        password: facultyForm.userId,
+                        department: facultyForm.department._id
+                    }
+                ),
                 cache: "no-store"
             }, { signal });
 
             const data = await res.json();
             if (res.status === 200) {
-                setFaculties(prev => ([...prev, { ...data.faculty }]))
+                if (isUpdate) {
+                    setFaculties((prev) =>
+                        prev.map((fac) => (fac._id === facultyForm._id ? facultyForm : fac))
+                    );
+                }
+                else {
+                    setFaculties(prev => ([...prev, { ...data.faculty }]));
+                }
+                setShowForm(false);
+                setFacultyForm({
+                    name: '',
+                    email: '',
+                    userId: '',
+                    department: { _id: '', name: '' }
+                })
             }
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'addFaculty' });
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'addFacultyError' });
         }
         finally {
             setAddFacultyLoading(false);
@@ -124,9 +161,14 @@ export default function Faculties() {
     }
 
 
-    const editFaculty = () => { }
+    const handleEdit = (fac) => {
+        setShowForm(true);
+        setIsUpdate(true);
+        window.scrollTo(0, 0);
+        setFacultyForm(fac);
+    }
 
-    const deleteFaculty = async (_id) => {
+    const handleDelete = async (_id) => {
         try {
             if (_id !== currentUser?._id) {
 
@@ -147,16 +189,17 @@ export default function Faculties() {
                         });
                         return filteredFaculties;
                     })
+                    setDeleteFaculty({ popup: false, _id: '' })
                 }
-                toast[data.type](data.message);
+                toast[data.type](data.message, { toastId: 'deleteFaculty' });
             }
             else {
-                toast.error('You Can\'t remove yourself.')
+                toast.error('You Can\'t remove yourself.', { toastId: 'selfDeleteFacultyError' })
             }
 
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'deleteFacultyError' });
         }
     }
 
@@ -171,7 +214,20 @@ export default function Faculties() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
+                    <Button
+                        varrient="outline"
+                        type="button"
+                        onClick={() => {
+                            setShowForm(prev => !prev);
+                            setIsUpdate(false);
+                            setFacultyForm({
+                                name: '',
+                                email: '',
+                                userId: '',
+                                department: { _id: '', name: '' }
+                            })
+                        }}
+                    >
                         {
                             showForm ?
                                 <>
@@ -189,7 +245,8 @@ export default function Faculties() {
                 <form
                     method="POST"
                     className={`${styles.form} ${showForm ? styles.active : ''}`}
-                    onSubmit={addFaculty}>
+                    onSubmit={handleSubmit}
+                >
                     <div>
                         <div className={styles.form_input_section}>
                             <h3 className={styles.form_heading}>Personal Details:</h3>
@@ -200,6 +257,7 @@ export default function Faculties() {
                                     id={"name"}
                                     label={"Name"}
                                     onChange={handleChange}
+                                    value={facultyForm.name}
                                     disabled={addFacultyLoading}
                                 />
                                 <Input
@@ -208,6 +266,7 @@ export default function Faculties() {
                                     id={"email"}
                                     label={"Email"}
                                     onChange={handleChange}
+                                    value={facultyForm.email}
                                     disabled={addFacultyLoading}
                                 />
                             </div>
@@ -223,7 +282,7 @@ export default function Faculties() {
                                     id={"userId"}
                                     label={"Faculty Id"}
                                     onChange={handleChange}
-                                    min={10000} max={90000}
+                                    value={facultyForm.userId}
                                     disabled={addFacultyLoading}
                                 />
                                 <Input
@@ -233,6 +292,7 @@ export default function Faculties() {
                                     id={"department"}
                                     label={"Department"}
                                     onChange={handleChange}
+                                    value={facultyForm.department.name}
                                     disabled={fetchDepartmentLoading}
                                 />
                             </div>
@@ -242,11 +302,11 @@ export default function Faculties() {
                         className={styles.form_submit_btn}
                         type="submit"
                         varrient="filled"
-                        onClick={addFaculty}
+                        onClick={handleSubmit}
                         loading={addFacultyLoading}
                     >
                         <FiUserPlus size={20} />
-                        Add Faculty
+                        {isUpdate ? 'Update Faculty' : 'Add Faculty'}
                     </Button>
 
                 </form>
@@ -308,12 +368,29 @@ export default function Faculties() {
                                     </div>
                                     {department()}
                                     <div className={styles.data_actions}>
-                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editFaculty(fac._id) }}>
-                                            <FiEdit3 size={20} />
-                                        </Button>
-                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteFaculty(fac._id) }}>
-                                            <AiOutlineDelete size={20} />
-                                        </Button>
+                                        <div className={styles.data_actions}>
+                                            {
+                                                deleteFaculty.popup && deleteFaculty._id === fac._id ?
+                                                    <>
+                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(fac._id); }}>
+                                                            <FiCheck size={20} />
+                                                        </Button>
+                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteFaculty({ popup: false, _id: '' }) }}>
+                                                            <FiX size={20} />
+                                                        </Button>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(fac) }}>
+                                                            <FiEdit3 size={20} />
+                                                        </Button>
+                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteFaculty({ popup: true, _id: fac._id }) }}>
+                                                            <AiOutlineDelete size={20} />
+                                                        </Button>
+                                                    </>
+
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             }).reverse()

@@ -1,19 +1,37 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function Student() {
+
+    const router = useRouter();
+    const session = useSession();
+
+    const [currentUser, setCurrentUser] = useState();
 
     const [students, setStudents] = useState([]);
 
     const [showForm, setShowForm] = useState(false);
-    const [studentForm, setStudentForm] = useState({});
+    const [studentForm, setStudentForm] = useState({
+        name: '',
+        email: '',
+        userId: '',
+        department: { _id: '', name: '' }
+    });
+
+    const [isUpdate, setIsUpdate] = useState(false);
+
+    const [deleteStudent, setDeleteStudent] = useState({
+        popup: false,
+        _id: ''
+    });
 
     const [addStudentLoading, setAddStudentLoading] = useState(false);
     const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
@@ -21,7 +39,6 @@ export default function Student() {
 
     const [departments, setDepartments] = useState();
 
-    const router = useRouter();
 
     useEffect(() => {
         const getDepartments = async () => {
@@ -35,7 +52,7 @@ export default function Student() {
                     setDepartments(data.departments);
                 }
             } catch (error) {
-                toast.error(error.message);
+                toast.error(error.message, { toastId: 'getDepartmentError' });
             }
             finally {
                 setFetchDepartmentLoading(false);
@@ -53,11 +70,11 @@ export default function Student() {
                 const data = await res.json();
                 if (res.status === 200)
                     setStudents(data.students);
-                toast[data.type](data.message);
+                toast[data.type](data.message, { toastId: 'getStudent' });
 
 
             } catch (error) {
-                toast.error(data.message);
+                toast.error(data.message, { toastId: 'getStudentError' });
             }
             finally {
                 setFetchStudentsLoading(false);
@@ -70,34 +87,70 @@ export default function Student() {
 
     }, []);
 
+    useEffect(() => {
+        try {
+            if (session?.status === 'authenticated') {
+                setCurrentUser(session?.data?.user)
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }, [session])
+
     const handleChange = (e) => {
         setStudentForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const addStudent = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+
+            if (studentForm.name === '' || studentForm.email === '' || studentForm.userId === '' || studentForm.department === '') {
+                toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
+                return;
+            }
+
             setAddStudentLoading(true);
             const { signal } = new AbortController()
+            const method = isUpdate ? 'PUT' : 'POST';
             const res = await fetch('/api/student', {
-                method: "POST",
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...studentForm, password: studentForm.userId }),
+                body: JSON.stringify(
+                    {
+                        ...studentForm,
+                        password: studentForm.userId,
+                        department: studentForm.department._id
+                    }
+                ),
                 cache: "no-store"
             }, { signal });
 
             const data = await res.json();
             if (res.status === 200) {
-                setStudents(prev => ([...prev, { ...data.student }]));
+                if (isUpdate) {
+                    setStudents((prev) =>
+                        prev.map((stu) => (stu._id === studentForm._id ? studentForm : stu))
+                    );
+                }
+                else {
+                    setStudents(prev => ([...prev, { ...data.student }]));
+                }
                 setShowForm(false);
+                setStudentForm({
+                    name: '',
+                    email: '',
+                    userId: '',
+                    department: { _id: '', name: '' }
+                })
             }
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'addStudent' });
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'addStudentError' });
         }
         finally {
             setAddStudentLoading(false);
@@ -105,32 +158,44 @@ export default function Student() {
 
     }
 
-    const editStudent = () => { }
-    const deleteStudent = async (_id) => {
+    const handleEdit = (stu) => {
+        setShowForm(true);
+        setIsUpdate(true);
+        window.scrollTo(0, 0);
+        setStudentForm(stu);
+    }
+
+    const handleDelete = async (_id) => {
         try {
-            const res = await fetch('/api/student', {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ _id })
-            })
-
-            const data = await res.json();
-
-            if (res.status === 200) {
-                setStudents(prev => {
-                    const filteredStudents = prev.filter(stu => {
-                        return stu._id !== _id;
-                    });
-                    return filteredStudents;
+            if (_id !== currentUser?._id) {
+                const res = await fetch('/api/student', {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ _id })
                 })
+
+                const data = await res.json();
+
+                if (res.status === 200) {
+                    setStudents(prev => {
+                        const filteredStudents = prev.filter(stu => {
+                            return stu._id !== _id;
+                        });
+                        return filteredStudents;
+                    });
+                    setDeleteStudent({ popup: false, _id: '' })
+                }
+
+                toast[data.type](data.message, { toastId: 'deleteStudent' });
+            }
+            else {
+                toast.error('You Can\'t remove yourself.', { toastId: 'selfDeleteStudentError' })
             }
 
-            toast[data.type](data.message);
-
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'deleteStudentError' });
         }
     }
 
@@ -145,7 +210,20 @@ export default function Student() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
+                    <Button
+                        varrient="outline"
+                        type="button"
+                        onClick={() => {
+                            setShowForm(prev => !prev);
+                            setIsUpdate(false);
+                            setStudentForm({
+                                name: '',
+                                email: '',
+                                userId: '',
+                                department: { _id: '', name: '' }
+                            })
+                        }}
+                    >
                         {
                             showForm ?
                                 <>
@@ -164,7 +242,7 @@ export default function Student() {
                 <form
                     method="POST"
                     className={`${styles.form} ${showForm ? styles.active : ''}`}
-                    onSubmit={addStudent}
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <div className={styles.form_input_section}>
@@ -176,6 +254,7 @@ export default function Student() {
                                     id={"name"}
                                     label={"Name"}
                                     onChange={handleChange}
+                                    value={studentForm.name}
                                     disabled={addStudentLoading}
                                 />
                                 <Input
@@ -184,6 +263,7 @@ export default function Student() {
                                     id={"email"}
                                     label={"Email"}
                                     onChange={handleChange}
+                                    value={studentForm.email}
                                     disabled={addStudentLoading}
                                 />
                             </div>
@@ -199,7 +279,7 @@ export default function Student() {
                                     id={"userId"}
                                     label={"Student Roll no."}
                                     onChange={handleChange}
-                                    min={100} max={90000}
+                                    value={studentForm.userId}
                                     disabled={addStudentLoading}
                                 />
                                 <Input
@@ -209,8 +289,9 @@ export default function Student() {
                                     id={"department"}
                                     label={"Branch"}
                                     onChange={handleChange}
+                                    value={studentForm.department.name}
                                     disabled={fetchDepartmentLoading}
-                                />
+                                />handleDelete
                             </div>
                         </div>
                     </div>
@@ -218,11 +299,11 @@ export default function Student() {
                         className={styles.form_submit_btn}
                         type="submit"
                         varrient="filled"
-                        onClick={addStudent}
+                        onClick={handleSubmit}
                         loading={addStudentLoading}
                     >
                         <FiUserPlus size={20} />
-                        Add Student
+                        {isUpdate ? 'Update Student' : 'Add Student'}
                     </Button>
 
                 </form>
@@ -285,12 +366,27 @@ export default function Student() {
                                     </div>
                                     {department()}
                                     <div className={styles.data_actions}>
-                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editStudent(stu._id) }}>
-                                            <FiEdit3 size={20} />
-                                        </Button>
-                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteStudent(stu._id) }}>
-                                            <AiOutlineDelete size={20} />
-                                        </Button>
+                                        {
+                                            deleteStudent.popup && deleteStudent._id === stu._id ?
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(stu._id); }}>
+                                                        <FiCheck size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteStudent({ popup: false, _id: '' }) }}>
+                                                        <FiX size={20} />
+                                                    </Button>
+                                                </>
+                                                :
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(stu) }}>
+                                                        <FiEdit3 size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteStudent({ popup: true, _id: stu._id }) }}>
+                                                        <AiOutlineDelete size={20} />
+                                                    </Button>
+                                                </>
+
+                                        }
                                     </div>
                                 </div>
                             }).reverse()

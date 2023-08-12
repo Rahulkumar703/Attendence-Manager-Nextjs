@@ -1,7 +1,7 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
@@ -14,7 +14,15 @@ export default function Subject() {
     const [subjects, setSubjects] = useState([]);
 
     const [showForm, setShowForm] = useState(false);
-    const [subjectForm, setSubjectForm] = useState({});
+    const [subjectForm, setSubjectForm] = useState({
+        name: '',
+        code: ''
+    });
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [deleteSubject, setDeleteSubject] = useState({
+        popup: false,
+        _id: ''
+    });
 
     const [addSubjectLoading, setAddSubjectLoading] = useState(false);
     const [fetchSubjectsLoading, setFetchSubjectsLoading] = useState(true);
@@ -32,13 +40,14 @@ export default function Subject() {
                 }, { next: { revalidate: 60 } })
 
                 const data = await res.json();
-                if (res.status === 200)
+                if (res.status === 200) {
                     setSubjects(data.subjects);
-                toast[data.type](data.message);
+                }
+                toast[data.type](data.message, { toastId: 'getSubject' });
 
 
             } catch (error) {
-                toast.error(data.message);
+                toast.error(data.message, { toastId: 'getSubjectError' });
             }
             finally {
                 setFetchSubjectsLoading(false);
@@ -53,13 +62,20 @@ export default function Subject() {
         setSubjectForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const addSubject = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+
+            if (subjectForm.name === '' || subjectForm.code === '') {
+                toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
+                return;
+            }
+
             setAddSubjectLoading(true);
+            const method = isUpdate ? 'PUT' : 'POST';
             const res = await fetch('/api/subject', {
-                method: "POST",
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -69,13 +85,23 @@ export default function Subject() {
 
             const data = await res.json();
             if (res.status === 200) {
-                setSubjects(prev => ([...prev, { ...data.subject }]));
+                if (isUpdate) {
+                    setSubjects((prev) =>
+                        prev.map((sub) => (sub._id === subjectForm._id ? subjectForm : sub))
+                    );
+                } else {
+                    setSubjects((prev) => [...prev, { ...data.subject }]);
+                }
                 setShowForm(false);
+                setSubjectForm({
+                    name: '',
+                    code: ''
+                })
             }
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'addSubject' });
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'addSubjectError' });
         }
         finally {
             setAddSubjectLoading(false);
@@ -83,8 +109,13 @@ export default function Subject() {
 
     }
 
-    const editSubject = () => { }
-    const deleteSubject = async (_id) => {
+    const handleEdit = (sub) => {
+        setShowForm(true);
+        setIsUpdate(true);
+        window.scrollTo(0, 0);
+        setSubjectForm(sub);
+    }
+    const handleDelete = async (_id) => {
         try {
             const res = await fetch('/api/subject', {
                 method: "DELETE",
@@ -103,12 +134,13 @@ export default function Subject() {
                     });
                     return filteredSubjects;
                 })
+                setDeleteSubject({ popup: '', _id: '' })
             }
 
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'deleteSubject' });
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'deleteSubjectError' });
         }
     }
 
@@ -123,7 +155,15 @@ export default function Subject() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
+                    <Button
+                        varrient="outline"
+                        type="button"
+                        onClick={() => {
+                            setShowForm(prev => !prev);
+                            setIsUpdate(false);
+                            setSubjectForm({ name: '', code: '' })
+                        }}
+                    >
                         {
                             showForm ?
                                 <>
@@ -142,7 +182,7 @@ export default function Subject() {
                 <form
                     method="POST"
                     className={`${styles.form} ${styles.row} ${showForm ? styles.active : ''}`}
-                    onSubmit={addSubject}
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <div className={styles.form_input_section}>
@@ -154,6 +194,7 @@ export default function Subject() {
                                     id={"name"}
                                     label={"Subject Name"}
                                     onChange={handleChange}
+                                    value={subjectForm.name}
                                     disabled={addSubjectLoading}
                                 />
                                 <Input
@@ -162,6 +203,7 @@ export default function Subject() {
                                     id={"code"}
                                     label={"Subject Code"}
                                     onChange={handleChange}
+                                    value={subjectForm.code}
                                     disabled={addSubjectLoading}
                                 />
                             </div>
@@ -171,11 +213,11 @@ export default function Subject() {
                         className={styles.form_submit_btn}
                         type="submit"
                         varrient="filled"
-                        onClick={addSubject}
+                        onClick={handleSubmit}
                         loading={addSubjectLoading}
                     >
                         <LuBookPlus size={20} />
-                        Add Subject
+                        {isUpdate ? 'Update Subject' : 'Add Subject'}
                     </Button>
 
                 </form>
@@ -204,13 +246,29 @@ export default function Subject() {
                                 return <div key={sub._id} className={`${styles.data}`}>
                                     <p className={styles.data_id}>{sub.code}</p>
                                     <p className={styles.data_name}>{sub.name}</p>
+
                                     <div className={styles.data_actions}>
-                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editSubject(sub._id) }}>
-                                            <FiEdit3 size={20} />
-                                        </Button>
-                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteSubject(sub._id) }}>
-                                            <AiOutlineDelete size={20} />
-                                        </Button>
+                                        {
+                                            deleteSubject.popup && deleteSubject._id === sub._id ?
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(sub._id); }}>
+                                                        <FiCheck size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteSubject({ popup: false, _id: '' }) }}>
+                                                        <FiX size={20} />
+                                                    </Button>
+                                                </>
+                                                :
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(sub) }}>
+                                                        <FiEdit3 size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteSubject({ popup: true, _id: sub._id }) }}>
+                                                        <AiOutlineDelete size={20} />
+                                                    </Button>
+                                                </>
+
+                                        }
                                     </div>
                                 </div>
                             }).reverse()

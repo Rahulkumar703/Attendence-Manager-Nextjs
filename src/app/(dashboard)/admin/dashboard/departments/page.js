@@ -1,7 +1,7 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
@@ -10,109 +10,114 @@ import { useRouter } from 'next/navigation'
 import { LuBookPlus } from 'react-icons/lu'
 
 export default function Department() {
-
     const [departments, setDepartments] = useState([]);
-
     const [showForm, setShowForm] = useState(false);
-    const [departmentForm, setDepartmentForm] = useState({});
+    const [departmentForm, setDepartmentForm] = useState({
+        _id: '',
+        name: '',
+        code: ''
+    });
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [deleteDepartment, setDeleteDepartment] = useState({
+        popup: false,
+        _id: ''
+    });
 
     const [addDepartmentLoading, setAddDepartmentLoading] = useState(false);
-    const [fetchDepartmentsLoading, setFetchDepartmentsLoading] = useState(false);
+    const [fetchDepartmentsLoading, setFetchDepartmentsLoading] = useState(true);
 
-
-    const router = useRouter();
 
     useEffect(() => {
-        const getDepartments = async () => {
+        async function getDepartments() {
             try {
                 const res = await fetch('/api/department', {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }, { next: { revalidate: 24 * 60 * 60 } })
-
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
                 const data = await res.json();
-                if (res.status === 200)
-                    setDepartments(data.departments);
-                toast[data.type](data.message);
-
+                setDepartments(data.departments);
+                toast[data.type](data.message, { toastId: 'getDepartment' });
             } catch (error) {
-                toast.error(data.message);
-            }
-            finally {
+                toast.error(error.message, { toastId: 'getDepartmentError' });
+            } finally {
                 setFetchDepartmentsLoading(false);
             }
         }
-
         getDepartments();
     }, []);
 
     const handleChange = (e) => {
-        setDepartmentForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    }
+        const { name, value } = e.target;
+        setDepartmentForm((prev) => ({ ...prev, [name]: value }));
+    };
 
-    const addDepartment = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
+            if (departmentForm.name === '' || departmentForm.code === '') {
+                toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
+                return;
+            }
+
             setAddDepartmentLoading(true);
-            const { signal } = new AbortController()
-            const res = await fetch('/api/department', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ ...departmentForm }),
-                cache: "no-store"
-            }, { signal });
+            const method = isUpdate ? 'PUT' : 'POST';
+            const res = await fetch('/api/department',
+                {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...departmentForm }),
+                    cache: 'no-store'
+                }
+            );
 
             const data = await res.json();
             if (res.status === 200) {
-                console.log(departments);
-                setDepartments(prev => ([...prev, { ...data.department }]));
+                if (isUpdate) {
+                    setDepartments((prev) =>
+                        prev.map((dep) => (dep._id === departmentForm._id ? departmentForm : dep))
+                    );
+                } else {
+                    setDepartments((prev) => [...prev, { ...data.department }]);
+                }
                 setShowForm(false);
-                setDepartmentForm({});
+                setDepartmentForm({
+                    name: '',
+                    code: ''
+                });
+                setIsUpdate(false);
             }
-            toast[data.type](data.message);
-
+            toast[data.type](data.message, { toastId: 'addDepartment' });
         } catch (error) {
-            toast.error(error.message);
-        }
-        finally {
+            toast.error(error.message, { toastId: 'addDepartmentError' });
+        } finally {
             setAddDepartmentLoading(false);
         }
+    };
 
-    }
+    const handleEdit = (dep) => {
+        setShowForm(true);
+        setIsUpdate(true);
+        window.scrollTo(0, 0);
+        setDepartmentForm(dep);
+    };
 
-    const editDepartment = () => { }
-    const deleteDepartment = async (_id) => {
+    const handleDelete = async (_id) => {
         try {
             const res = await fetch('/api/department', {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ _id })
-            })
-
+            });
             const data = await res.json();
-
             if (res.status === 200) {
-                setDepartments(prev => {
-                    const filteredDepartments = prev.filter(dep => {
-                        return dep._id !== _id;
-                    });
-                    return filteredDepartments;
-                })
+                setDepartments((prev) => prev.filter((dep) => dep._id !== _id));
+                setDeleteDepartment({ popup: false, _id: '' })
             }
-
-            toast[data.type](data.message);
-
+            toast[data.type](data.message, { toastId: 'deleteDepartment' });
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'deleteDepartmentError' });
         }
-    }
+    };
 
 
 
@@ -125,7 +130,14 @@ export default function Department() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <Button varrient="outline" type="button" onClick={() => { setShowForm(prev => !prev) }}>
+                    <Button
+                        varrient="outline"
+                        type="button" onClick={() => {
+                            setShowForm(prev => !prev);
+                            setIsUpdate(false);
+                            setDepartmentForm({ name: '', code: '' })
+                        }}
+                    >
                         {
                             showForm ?
                                 <>
@@ -144,7 +156,7 @@ export default function Department() {
                 <form
                     method="POST"
                     className={`${styles.form} ${styles.row} ${showForm ? styles.active : ''}`}
-                    onSubmit={addDepartment}
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <div className={styles.form_input_section}>
@@ -156,6 +168,7 @@ export default function Department() {
                                     id={"name"}
                                     label={"Department Name"}
                                     onChange={handleChange}
+                                    value={departmentForm.name}
                                     disabled={addDepartmentLoading}
                                 />
                                 <Input
@@ -164,6 +177,7 @@ export default function Department() {
                                     id={"code"}
                                     label={"Department Code"}
                                     onChange={handleChange}
+                                    value={departmentForm.code}
                                     disabled={addDepartmentLoading}
                                 />
                             </div>
@@ -173,13 +187,17 @@ export default function Department() {
                         className={styles.form_submit_btn}
                         type="submit"
                         varrient="filled"
-                        onClick={addDepartment}
+                        onClick={handleSubmit}
                         loading={addDepartmentLoading}
                     >
                         <LuBookPlus size={20} />
-                        Add Department
+                        {
+                            isUpdate ?
+                                'Update Department'
+                                :
+                                'Add Department'
+                        }
                     </Button>
-
                 </form>
             </div>
 
@@ -202,17 +220,32 @@ export default function Department() {
                                 </p>
                             </div>
                             :
-                            departments?.map(sub => {
-                                return <div key={sub._id} className={`${styles.data}`}>
-                                    <p className={styles.data_id}>{sub.code}</p>
-                                    <p className={styles.data_name}>{sub.name}</p>
+                            departments?.map(dep => {
+                                return <div key={dep._id} className={`${styles.data}`}>
+                                    <p className={styles.data_id}>{dep.code}</p>
+                                    <p className={styles.data_name}>{dep.name}</p>
                                     <div className={styles.data_actions}>
-                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { editDepartment(sub._id) }}>
-                                            <FiEdit3 size={20} />
-                                        </Button>
-                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { deleteDepartment(sub._id) }}>
-                                            <AiOutlineDelete size={20} />
-                                        </Button>
+                                        {
+                                            deleteDepartment.popup && deleteDepartment._id === dep._id ?
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(dep._id); }}>
+                                                        <FiCheck size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteDepartment({ popup: false, _id: '' }) }}>
+                                                        <FiX size={20} />
+                                                    </Button>
+                                                </>
+                                                :
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(dep) }}>
+                                                        <FiEdit3 size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteDepartment({ popup: true, _id: dep._id }) }}>
+                                                        <AiOutlineDelete size={20} />
+                                                    </Button>
+                                                </>
+
+                                        }
                                     </div>
                                 </div>
                             }).reverse()

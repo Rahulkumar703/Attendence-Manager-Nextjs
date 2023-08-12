@@ -10,19 +10,21 @@ import { signIn } from 'next-auth/react'
 import { FiLogIn } from "react-icons/fi";
 
 
-
-
 export default function LoginPage() {
 
 
     const router = useRouter();
     const params = useSearchParams();
 
-    const [loginForm, setLoginForm] = useState({});
+    const [loginForm, setLoginForm] = useState({
+        userId: '',
+        password: ''
+    });
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
-        setLoginForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+        setLoginForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
 
 
@@ -53,16 +55,15 @@ export default function LoginPage() {
                     router.push(callbackUrl);
                 }
             }
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'login' });
 
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'loginError' });
         }
         finally {
             setIsLoading(false)
         }
     }
-
 
     return (
         <div className={styles.login}>
@@ -74,6 +75,7 @@ export default function LoginPage() {
                         name={"userId"}
                         id={"userId"}
                         label={"Roll No."}
+                        value={loginForm.userId}
                         onChange={handleChange}
                         disabled={isLoading}
                     />
@@ -82,6 +84,7 @@ export default function LoginPage() {
                         name={"password"}
                         id={"password"}
                         label={"Password"}
+                        value={loginForm.password}
                         onChange={handleChange}
                         disabled={isLoading}
                     />

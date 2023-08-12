@@ -101,3 +101,23 @@ export async function DELETE(req) {
         return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
     }
 }
+
+
+export async function PUT(req) {
+    try {
+        connect();
+
+        const reqBody = await req.json();
+
+        delete reqBody.password;
+
+        const updatedData = await Faculty.updateOne({ _id: reqBody._id }, reqBody);
+
+        return NextResponse.json({
+            message: "Faculty Updated Successfully", type: 'success', updatedData
+        }, { status: 200 });
+
+    } catch (error) {
+        return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
+    }
+}

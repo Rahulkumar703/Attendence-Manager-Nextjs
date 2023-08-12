@@ -14,7 +14,13 @@ export default function SignupPage() {
 
     const router = useRouter();
 
-    const [loginForm, setLoginForm] = useState({});
+    const [signupForm, setSignupForm] = useState({
+        name: '',
+        email: '',
+        password: '',
+        userId: '',
+        department: { _id: '', name: '' }
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
 
@@ -29,10 +35,10 @@ export default function SignupPage() {
 
                 const data = await res.json();
                 if (data.type === 'success') {
-                    setDepartment(data.department);
+                    setDepartment(data.departments);
                 }
             } catch (error) {
-                toast.error(error.message);
+                toast.error(error.message, { toastId: 'getDepartmentError' });
             }
             finally {
                 setDisabled(false);
@@ -43,7 +49,7 @@ export default function SignupPage() {
     }, [])
 
     const handleChange = (e) => {
-        setLoginForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+        setSignupForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
     const handleSubmit = async (e) => {
@@ -57,13 +63,13 @@ export default function SignupPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(loginForm),
+                body: JSON.stringify({ ...signupForm, department: signupForm.department._id }),
                 cache: "no-store"
             }, { signal });
 
             const data = await res.json();
 
-            toast[data.type](data.message);
+            toast[data.type](data.message, { toastId: 'signup' });
 
             if (res.ok) {
                 if (data.type === "success") {
@@ -71,7 +77,7 @@ export default function SignupPage() {
                 }
             }
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message, { toastId: 'signupError' });
         }
         finally {
             setIsLoading(false)
@@ -97,6 +103,7 @@ export default function SignupPage() {
                                     id={"name"}
                                     label={"Name"}
                                     onChange={handleChange}
+                                    value={signupForm.name}
                                     disabled={isLoading}
                                 />
                                 <Input
@@ -105,6 +112,7 @@ export default function SignupPage() {
                                     id={"email"}
                                     label={"Email"}
                                     onChange={handleChange}
+                                    value={signupForm.email}
                                     disabled={isLoading}
                                 />
                                 <Input
@@ -113,6 +121,7 @@ export default function SignupPage() {
                                     id={"password"}
                                     label={"Password"}
                                     onChange={handleChange}
+                                    value={signupForm.password}
                                     disabled={isLoading}
                                 />
                             </div>
@@ -128,6 +137,7 @@ export default function SignupPage() {
                                     id={"userId"}
                                     label={"Roll No."}
                                     onChange={handleChange}
+                                    value={signupForm.userId}
                                     min={10000} max={90000}
                                     disabled={isLoading}
                                 />
@@ -138,6 +148,7 @@ export default function SignupPage() {
                                     id={"department"}
                                     label={"Department"}
                                     onChange={handleChange}
+                                    value={signupForm.department.name}
                                     disabled={disabled}
                                 />
                             </div>

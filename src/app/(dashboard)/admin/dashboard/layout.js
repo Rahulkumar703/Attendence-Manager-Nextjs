@@ -3,7 +3,7 @@ import styles from '@/styles/admin_dashboard.module.scss'
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { FiBook } from 'react-icons/fi';
 import { LuLayoutDashboard } from 'react-icons/lu';
-import { PiBookBold, PiBuildingsBold, PiStudentBold } from 'react-icons/pi';
+import { PiBuildingsBold, PiStudentBold } from 'react-icons/pi';
 import { SiGoogleclassroom } from 'react-icons/si';
 
 export const metadata = {
@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }) {
         {
             name: "dashboard",
             icon: <LuLayoutDashboard size={20} />,
-            href: "/admin/dashboard/"
+            href: "/admin/dashboard"
         },
         {
             name: "Manage Faculties",

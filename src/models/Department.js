@@ -12,7 +12,7 @@ const DepartmentSchema = mongoose.Schema({
         trim: true,
         unique: true
     },
-})
+}, { timestamps: true })
 
 const Department = mongoose.models.department || mongoose.model('department', DepartmentSchema);
 export default Department;
