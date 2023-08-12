@@ -1,0 +1,46 @@
+.searchbar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    position: relative;
+    width: 100%;
+
+    &.active {
+        .searchInput {
+            input {
+                padding-right: 4rem;
+            }
+        }
+
+        .clear_icon {
+            opacity: 1;
+            pointer-events: all;
+
+            &:hover {
+                background: var(--transparent);
+            }
+        }
+    }
+
+    .searchInput {
+        box-sizing: border-box;
+        min-width: 25rem;
+
+        input {
+            padding-right: 1rem;
+        }
+    }
+
+    .clear_icon {
+        position: absolute;
+        right: .3rem;
+        padding: .5rem;
+        top: 50%;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-50%);
+        transition: .3s ease-in-out;
+        cursor: pointer;
+        border-radius: .5rem;
+    }
+}

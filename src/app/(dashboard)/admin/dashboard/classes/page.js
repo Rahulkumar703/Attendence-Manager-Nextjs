@@ -1,5 +1,4 @@
 "use client"
-import SearchBar from '@/components/SearchBar'
 import styles from '@/styles/admin_dashboard.module.scss'
 import { useRouter } from 'next/navigation'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -14,7 +13,6 @@ export default function Subject() {
                 <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
                 <h2>Manage Classes</h2>
             </div>
-            <SearchBar />
         </div>
     )
 }
