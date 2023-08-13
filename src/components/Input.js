@@ -13,9 +13,7 @@ export default function Input(
         options,
         disabled = false,
         value,
-        onChange,
-        placeholder,
-        className
+        onChange
     }
 ) {
 
@@ -69,7 +67,7 @@ export default function Input(
     switch (type) {
         case "password":
             return (
-                <div className={`${`${styles.input_box} ${className}`} ${styles.icon}`}>
+                <div className={`${styles.input_box} ${styles.icon}`}>
                     <input
                         type={showPassword ? 'text' : type}
                         id={id}
@@ -78,9 +76,8 @@ export default function Input(
                         autoComplete={name}
                         onChange={handelChange}
                         disabled={disabled}
-                        placeholder={placeholder}
                     />
-                    {label ? <label htmlFor={id}>{label}</label> : null}
+                    <label htmlFor={id}>{label}</label>
                     <div className={styles.eye_icon} onClick={() => { setShowPassword(prev => !prev) }}>
                         {
                             showPassword ?
@@ -92,7 +89,7 @@ export default function Input(
             )
         case "select":
             return (
-                <div className={`${styles.input_box} ${className}`}>
+                <div className={styles.input_box}>
                     <div className={styles.custom_selectbox} ref={selectContainerRef}>
                         <input className={styles.select_input}
                             type="text" name={name}
@@ -124,12 +121,12 @@ export default function Input(
                             }
                         </div>
                     </div>
-                    {label ? <label htmlFor={id}>{label}</label> : null}
+                    <label htmlFor={id}>{label}</label>
                 </div >
             )
         case "number":
             return (
-                <div className={`${styles.input_box} ${className}`}>
+                <div className={styles.input_box}>
                     <input
                         type={type}
                         id={id}
@@ -138,14 +135,13 @@ export default function Input(
                         autoComplete={name}
                         onChange={handelChange}
                         disabled={disabled}
-                        placeholder={placeholder}
                     />
-                    {label ? <label htmlFor={id}>{label}</label> : null}
+                    <label htmlFor={id}>{label}</label>
                 </div>
             )
         default:
             return (
-                <div className={`${styles.input_box} ${className}`}>
+                <div className={styles.input_box}>
                     <input
                         type={type}
                         id={id}
@@ -154,9 +150,8 @@ export default function Input(
                         autoComplete={name}
                         onChange={handelChange}
                         disabled={disabled}
-                        placeholder={placeholder}
                     />
-                    {label ? <label htmlFor={id}>{label}</label> : null}
+                    <label htmlFor={id}>{label}</label>
                 </div>
             )
     }

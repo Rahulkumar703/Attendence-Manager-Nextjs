@@ -9,7 +9,7 @@ section.dashboard {
     margin-left: 9rem;
     width: 100%;
     padding: 1rem;
-    gap: 2rem;
+    gap: 1rem;
 
     &.loader {
         display: grid;
@@ -46,10 +46,7 @@ section.dashboard {
         flex-direction: column;
 
         .form_toggle_btn {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 3fr 1fr;
-            gap: 30%;
+            margin-left: auto;
         }
 
         .form {
@@ -153,8 +150,7 @@ section.dashboard {
 
             .data_name {
                 font-weight: 600;
-                line-height: 1.8rem;
-                text-transform: capitalize;
+                line-height: 100%;
             }
 
             .data_email {

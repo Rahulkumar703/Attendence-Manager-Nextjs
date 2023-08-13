@@ -8,7 +8,6 @@ import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import SearchBar from '@/components/SearchBar'
 
 export default function Student() {
 
@@ -18,7 +17,6 @@ export default function Student() {
     const [currentUser, setCurrentUser] = useState();
 
     const [students, setStudents] = useState([]);
-    const [searchValue, setSearchValue] = useState('')
 
     const [showForm, setShowForm] = useState(false);
     const [studentForm, setStudentForm] = useState({
@@ -212,7 +210,6 @@ export default function Student() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <SearchBar value={searchValue} setValue={setSearchValue} />
                     <Button
                         varrient="outline"
                         type="button"
@@ -331,83 +328,69 @@ export default function Student() {
                                 </p>
                             </div>
                             :
-                            students
-                                .filter((stu) => stu.name.toLowerCase().includes(searchValue.toLowerCase()) || (stu.userId + '').includes(searchValue) || stu.email.toLowerCase().includes(searchValue.toLowerCase()))
-                                .map(stu => {
-                                    const department = () => {
-                                        let depName = stu?.department?.name?.split(' ') || [' '];
-                                        depName = depName[depName?.length - 1];
+                            students?.map(stu => {
+                                const department = () => {
+                                    let depName = stu?.department?.name?.split(' ') || [' '];
+                                    depName = depName[depName?.length - 1];
 
-                                        switch (depName) {
-                                            case "(CSE)":
-                                                depName = "cse";
-                                                return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
-                                            case "(CE)":
-                                                depName = "civil";
-                                                return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
-                                            case "(ME)":
-                                                depName = "mech";
-                                                return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
-                                            case "(EEE)":
-                                                depName = "eee";
-                                                return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
-                                            case "(CA)":
-                                                depName = "ca";
-                                                return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
-                                            case "(AI)":
-                                                depName = "ai";
-                                                return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
-                                            default:
-                                                depName = "N/A";
-                                                return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
+                                    switch (depName) {
+                                        case "(CSE)":
+                                            depName = "cse";
+                                            return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
+                                        case "(CE)":
+                                            depName = "civil";
+                                            return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
+                                        case "(ME)":
+                                            depName = "mech";
+                                            return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
+                                        case "(EEE)":
+                                            depName = "eee";
+                                            return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
+                                        case "(CA)":
+                                            depName = "ca";
+                                            return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
+                                        case "(AI)":
+                                            depName = "ai";
+                                            return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
+                                        default:
+                                            depName = "N/A";
+                                            return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
+
+                                    }
+                                }
+                                return <div key={stu._id} className={`${styles.data}`}>
+                                    <p className={styles.data_id}>{stu.userId}</p>
+                                    <div>
+                                        <p className={styles.data_name}>{stu.name}</p>
+                                        <p className={styles.data_email}>{stu.email}</p>
+                                    </div>
+                                    {department()}
+                                    <div className={styles.data_actions}>
+                                        {
+                                            deleteStudent.popup && deleteStudent._id === stu._id ?
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(stu._id); }}>
+                                                        <FiCheck size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteStudent({ popup: false, _id: '' }) }}>
+                                                        <FiX size={20} />
+                                                    </Button>
+                                                </>
+                                                :
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(stu) }}>
+                                                        <FiEdit3 size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteStudent({ popup: true, _id: stu._id }) }}>
+                                                        <AiOutlineDelete size={20} />
+                                                    </Button>
+                                                </>
 
                                         }
-                                    }
-                                    return <div key={stu._id} className={`${styles.data}`}>
-                                        <p className={styles.data_id}>{stu.userId}</p>
-                                        <div>
-                                            <p className={styles.data_name}>{stu.name}</p>
-                                            <p className={styles.data_email}>{stu.email}</p>
-                                        </div>
-                                        {department()}
-                                        <div className={styles.data_actions}>
-                                            {
-                                                deleteStudent.popup && deleteStudent._id === stu._id ?
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(stu._id); }}>
-                                                            <FiCheck size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteStudent({ popup: false, _id: '' }) }}>
-                                                            <FiX size={20} />
-                                                        </Button>
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(stu) }}>
-                                                            <FiEdit3 size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteStudent({ popup: true, _id: stu._id }) }}>
-                                                            <AiOutlineDelete size={20} />
-                                                        </Button>
-                                                    </>
-
-                                            }
-                                        </div>
                                     </div>
-                                }).reverse()
+                                </div>
+                            }).reverse()
 
-                }
-                {
-                    !fetchStudentsLoading && students
-                        .filter((stu) => stu.name.toLowerCase().includes(searchValue.toLowerCase()) || (stu.userId + '').includes(searchValue) || stu.email.toLowerCase().includes(searchValue.toLowerCase())).length === 0 ?
-
-                        <div className={styles.message_container}>
-                            <FiAlertCircle size={20} />
-                            <p className={styles.message}>
-                                No Students Matches with your search
-                            </p>
-                        </div>
-                        : null
                 }
             </div>
 

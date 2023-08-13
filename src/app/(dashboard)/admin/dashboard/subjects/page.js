@@ -8,12 +8,10 @@ import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useRouter } from 'next/navigation'
 import { LuBookPlus } from 'react-icons/lu'
-import SearchBar from '@/components/SearchBar'
 
 export default function Subject() {
 
     const [subjects, setSubjects] = useState([]);
-    const [searchValue, setSearchValue] = useState('')
 
     const [showForm, setShowForm] = useState(false);
     const [subjectForm, setSubjectForm] = useState({
@@ -157,7 +155,6 @@ export default function Subject() {
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
-                    <SearchBar value={searchValue} setValue={setSearchValue} />
                     <Button
                         varrient="outline"
                         type="button"
@@ -245,50 +242,37 @@ export default function Subject() {
                                 </p>
                             </div>
                             :
-                            subjects
-                                .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || sub.code.includes(searchValue))
-                                .map(sub => {
-                                    return <div key={sub._id} className={`${styles.data}`}>
-                                        <p className={styles.data_id}>{sub.code}</p>
-                                        <p className={styles.data_name}>{sub.name}</p>
+                            subjects?.map(sub => {
+                                return <div key={sub._id} className={`${styles.data}`}>
+                                    <p className={styles.data_id}>{sub.code}</p>
+                                    <p className={styles.data_name}>{sub.name}</p>
 
-                                        <div className={styles.data_actions}>
-                                            {
-                                                deleteSubject.popup && deleteSubject._id === sub._id ?
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(sub._id); }}>
-                                                            <FiCheck size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteSubject({ popup: false, _id: '' }) }}>
-                                                            <FiX size={20} />
-                                                        </Button>
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(sub) }}>
-                                                            <FiEdit3 size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteSubject({ popup: true, _id: sub._id }) }}>
-                                                            <AiOutlineDelete size={20} />
-                                                        </Button>
-                                                    </>
+                                    <div className={styles.data_actions}>
+                                        {
+                                            deleteSubject.popup && deleteSubject._id === sub._id ?
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(sub._id); }}>
+                                                        <FiCheck size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteSubject({ popup: false, _id: '' }) }}>
+                                                        <FiX size={20} />
+                                                    </Button>
+                                                </>
+                                                :
+                                                <>
+                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(sub) }}>
+                                                        <FiEdit3 size={20} />
+                                                    </Button>
+                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteSubject({ popup: true, _id: sub._id }) }}>
+                                                        <AiOutlineDelete size={20} />
+                                                    </Button>
+                                                </>
 
-                                            }
-                                        </div>
+                                        }
                                     </div>
-                                }).reverse()
+                                </div>
+                            }).reverse()
 
-                }
-                {
-                    !fetchSubjectsLoading && subjects
-                        .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || sub.code.includes(searchValue)).length === 0 ?
-                        <div className={styles.message_container}>
-                            <FiAlertCircle size={20} />
-                            <p className={styles.message}>
-                                No Subject Matches with your search
-                            </p>
-                        </div>
-                        : null
                 }
             </div>
 
