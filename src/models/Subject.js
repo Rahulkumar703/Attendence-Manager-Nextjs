@@ -12,6 +12,11 @@ const SubjectSchema = mongoose.Schema({
         trim: true,
         unique: true
     },
+    semester: {
+        type: Number,
+        required: [true, "Please enter Subject Semester."],
+        trim: true
+    },
 }, { timestamps: true })
 
 const Subject = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);

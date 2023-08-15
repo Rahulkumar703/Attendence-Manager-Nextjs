@@ -1,13 +1,15 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import SearchBar from '@/components/SearchBar'
+import Link from 'next/link'
+import DashboardHeader from '@/components/DashboardHeader'
 
 export default function Faculties() {
 
@@ -16,27 +18,26 @@ export default function Faculties() {
     const [currentUser, setCurrentUser] = useState();
 
     const [faculties, setFaculties] = useState([]);
-
+    const [searchValue, setSearchValue] = useState('')
     const [showForm, setShowForm] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [departments, setDepartments] = useState();
+
+    const [addFacultyLoading, setAddFacultyLoading] = useState(false);
+    const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
+    const [fetchFacultiesLoading, setFetchFacultiesLoading] = useState(true);
+
     const [facultyForm, setFacultyForm] = useState({
         name: '',
         email: '',
         userId: '',
         department: { _id: '', name: '' }
     });
-    const [isUpdate, setIsUpdate] = useState(false);
 
-    const [addFacultyLoading, setAddFacultyLoading] = useState(false);
-    const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
-    const [fetchFacultiesLoading, setFetchFacultiesLoading] = useState(true);
-
-    const [departments, setDepartments] = useState();
     const [deleteFaculty, setDeleteFaculty] = useState({
         popup: false,
         _id: ''
     });
-
-    const router = useRouter();
 
     useEffect(() => {
 
@@ -160,7 +161,6 @@ export default function Faculties() {
 
     }
 
-
     const handleEdit = (fac) => {
         setShowForm(true);
         setIsUpdate(true);
@@ -207,13 +207,11 @@ export default function Faculties() {
 
     return (
         <div className={styles.dashboard_section}>
-            <div className={styles.section_heading}>
-                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
-                <h2>Manage Faculties</h2>
-            </div>
+            <DashboardHeader heading={'Manage Faculties'} />
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
+                    <SearchBar value={searchValue} setValue={setSearchValue} />
                     <Button
                         varrient="outline"
                         type="button"
@@ -330,71 +328,121 @@ export default function Faculties() {
                                 </p>
                             </div>
                             :
-                            faculties?.map(fac => {
-                                const department = () => {
-                                    let depName = fac?.department?.name?.split(' ') || [' '];
-                                    depName = depName[depName?.length - 1];
+                            faculties
+                                .filter((fac) => fac.name.toLowerCase().includes(searchValue.toLowerCase()) || (fac.userId + '').includes(searchValue) || fac.email.toLowerCase().includes(searchValue.toLowerCase()))
+                                .map(fac => {
+                                    const department = () => {
+                                        let depName = fac?.department?.name?.split(' ') || [' '];
+                                        depName = depName[depName?.length - 1];
 
-                                    switch (depName) {
-                                        case "(CSE)":
-                                            depName = "cse";
-                                            return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
-                                        case "(CE)":
-                                            depName = "civil";
-                                            return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
-                                        case "(ME)":
-                                            depName = "mech";
-                                            return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
-                                        case "(EEE)":
-                                            depName = "eee";
-                                            return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
-                                        case "(CA)":
-                                            depName = "ca";
-                                            return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
-                                        case "(AI)":
-                                            depName = "ai";
-                                            return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
-                                        default:
-                                            depName = "N/A";
-                                            return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
+                                        switch (depName) {
+                                            case "(CSE)":
+                                                depName = "cse";
+                                                return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
+                                            case "(CE)":
+                                                depName = "civil";
+                                                return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
+                                            case "(ME)":
+                                                depName = "mech";
+                                                return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
+                                            case "(EEE)":
+                                                depName = "eee";
+                                                return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
+                                            case "(CA)":
+                                                depName = "ca";
+                                                return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
+                                            case "(AI)":
+                                                depName = "ai";
+                                                return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
+                                            default:
+                                                depName = fac?.department?.name;
+                                                return <p className={`${styles.data_department} ${styles.other}`}>{depName}</p>
 
+                                        }
                                     }
-                                }
-                                return <div key={fac._id} className={styles.data}>
-                                    <p className={styles.data_id}>{fac.userId}</p>
-                                    <div className={styles.col}>
-                                        <p className={styles.data_name}>{fac.name}</p>
-                                        <p className={styles.data_email}>{fac.email}</p>
-                                    </div>
-                                    {department()}
-                                    <div className={styles.data_actions}>
-                                        <div className={styles.data_actions}>
-                                            {
-                                                deleteFaculty.popup && deleteFaculty._id === fac._id ?
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(fac._id); }}>
-                                                            <FiCheck size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteFaculty({ popup: false, _id: '' }) }}>
-                                                            <FiX size={20} />
-                                                        </Button>
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(fac) }}>
-                                                            <FiEdit3 size={20} />
-                                                        </Button>
-                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteFaculty({ popup: true, _id: fac._id }) }}>
-                                                            <AiOutlineDelete size={20} />
-                                                        </Button>
-                                                    </>
-
-                                            }
+                                    return <Link href={`facultie/${fac._id}`} key={fac._id} className={styles.data}>
+                                        <p className={styles.data_id}>{fac.userId}</p>
+                                        <div className={styles.col}>
+                                            <p className={styles.data_name}>{fac.name}</p>
+                                            <p className={styles.data_email}>{fac.email}</p>
                                         </div>
-                                    </div>
-                                </div>
-                            }).reverse()
+                                        {department()}
+                                        <div className={styles.data_actions}>
+                                            <div className={styles.data_actions}>
+                                                {
+                                                    deleteFaculty.popup && deleteFaculty._id === fac._id ?
+                                                        <>
+                                                            <Button
+                                                                type="button"
+                                                                varrient="filled"
+                                                                className={styles.delete_btn}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    handleDelete(fac._id);
+                                                                }}
+                                                            >
+                                                                <FiCheck size={20} />
+                                                            </Button>
 
+                                                            <Button
+                                                                type="button"
+                                                                varrient="filled"
+                                                                className={styles.edit_btn}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    setDeleteFaculty({ popup: false, _id: '' });
+                                                                }}
+                                                            >
+                                                                <FiX size={20} />
+                                                            </Button>
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <Button
+                                                                type="button"
+                                                                varrient="filled"
+                                                                className={styles.edit_btn}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    handleEdit(fac);
+                                                                }}
+                                                            >
+                                                                <FiEdit3 size={20} />
+                                                            </Button>
+
+                                                            <Button
+                                                                type="button"
+                                                                varrient="filled"
+                                                                className={styles.delete_btn}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    setDeleteFaculty({ popup: true, _id: fac._id });
+                                                                }}
+                                                            >
+                                                                <AiOutlineDelete size={20} />
+                                                            </Button>
+                                                        </>
+                                                }
+                                            </div>
+                                        </div>
+                                    </Link>
+                                }).reverse()
+                }
+                {
+                    !fetchFacultiesLoading && faculties.length && faculties
+                        .filter((fac) => fac.name.toLowerCase().includes(searchValue.toLowerCase()) || (fac.userId + '').includes(searchValue) || fac.email.toLowerCase().includes(searchValue.toLowerCase())).length === 0 ?
+
+                        <div className={styles.message_container}>
+                            <FiAlertCircle size={20} />
+                            <p className={styles.message}>
+                                No Faculties Matches with your search
+                            </p>
+                        </div>
+                        : null
                 }
             </div>
 

@@ -8,7 +8,7 @@ connect();
 export async function GET() {
 
     try {
-        let response = await Subject.find();
+        let response = await Subject.find().sort({ name: -1 });
         if (response) {
             return NextResponse.json({ message: 'Subjects Fetched Successfully', type: 'success', subjects: response }, { status: 200 });
         }
@@ -24,7 +24,7 @@ export async function POST(req) {
 
     try {
         const reqBody = await req.json();
-        const { name, code } = reqBody;
+        const { name, code, semester } = reqBody;
 
 
         // validating Request body
@@ -44,7 +44,7 @@ export async function POST(req) {
         }
 
         // Create The Subject
-        let newSubject = new Subject({ name, code });
+        let newSubject = new Subject({ name, code, semester });
         await newSubject.save();
 
 

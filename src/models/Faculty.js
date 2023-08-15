@@ -43,14 +43,8 @@ const FacultySchema = mongoose.Schema({
         type: [
             {
                 subject: {
-                    type: String,
+                    type: mongoose.ObjectId,
                     required: [true, "Please enter the Subject."],
-                    trim: true,
-                },
-                semester: {
-                    type: Number,
-                    required: [true, "Please enter your Semester."],
-                    trim: true,
                 }
             }
         ]

@@ -1,56 +1,14 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt'
 
-const StudentSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Please enter your Name."],
-        trim: true,
-        lowercase: true
-    },
-    userId: {
-        type: Number,
-        required: [true, "Please enter your Roll Number."],
-        trim: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: [true, "Please enter your Email."],
-        trim: true,
-        unique: true,
-        lowercase: true
-    },
-    password: {
-        type: String,
-        required: [true, "Password is required."],
-        select: false
-    },
-    department: {
-        type: mongoose.ObjectId,
-        required: [true, "Please enter your Department."],
-        trim: true,
-    },
-    level: {
-        type: Number,
-        default: 1
-    },
-    isVarified: {
-        type: Boolean,
-        default: false,
-    },
+const classesSchema = mongoose.Schema({
     classes: {
         type: [
             {
                 subject: {
-                    type: String,
+                    type: mongoose.ObjectId,
                     required: [true, "Please enter the Subject."],
-                    trim: true,
-                },
-                semester: {
-                    type: Number,
-                    required: [true, "Please enter your Semester."],
-                    trim: true,
+                    unique: true,
                 },
                 faculty: mongoose.ObjectId,
                 attendence: {
@@ -69,7 +27,61 @@ const StudentSchema = mongoose.Schema({
                 }
             }
         ]
+    }
+});
+
+
+
+const StudentSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, "Please enter your Name."],
+        trim: true,
+        lowercase: true
     },
+    userId: {
+        type: Number,
+        required: [true, "Please enter your Roll Number."],
+        trim: true,
+        unique: true
+    },
+    registration_number: {
+        type: Number,
+        required: [true, "Please enter your Registration Number."],
+        trim: true,
+        unique: true,
+    },
+    email: {
+        type: String,
+        trim: true,
+        unique: true,
+        lowercase: true
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required."],
+        select: false
+    },
+    department: {
+        type: mongoose.ObjectId,
+        required: [true, "Please enter your Department."],
+        trim: true,
+    },
+    semester: {
+        type: Number,
+        required: [true, "Please enter your Semester."],
+        trim: true,
+    },
+    level: {
+        type: Number,
+        default: 1
+    },
+    isVarified: {
+        type: Boolean,
+        default: false,
+    },
+    classes: classesSchema,
+
     forgotPasswordToken: String,
     verifyToken: String,
 

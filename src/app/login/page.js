@@ -89,7 +89,8 @@ export default function LoginPage() {
                         disabled={isLoading}
                     />
                     <div className={styles.extra_links}>
-                        <Link href={'/forgot'}>forgot password ?</Link>
+                        <p>Having Trouble?</p>
+                        <Link href={'/forgot'}>reset password</Link>
                     </div>
                     <Button
                         type="submit"
@@ -101,9 +102,6 @@ export default function LoginPage() {
                         Login
                     </Button>
                 </form>
-                <div className={styles.extra_links}>
-                    <p>{"Don't have an account ?"}</p><Link href={'/signup'}>Register now</Link>
-                </div>
             </div>
         </div>
     )

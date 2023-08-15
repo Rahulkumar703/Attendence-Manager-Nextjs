@@ -9,7 +9,7 @@ export async function GET() {
     try {
 
         // Getting Department data
-        const response = await Department.find().sort({ code: 1 });
+        const response = await Department.find().sort({ name: -1 });
         return NextResponse.json({ type: 'success', message: 'department fetched successfully.', departments: response }, { status: 200 })
 
     } catch (error) {
@@ -44,7 +44,6 @@ export async function POST(req) {
 
 export async function DELETE(req) {
     try {
-        connect();
 
         const reqBody = await req.json();
         const { _id } = reqBody;
@@ -76,7 +75,6 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
     try {
-        connect();
 
         const reqBody = await req.json();
 

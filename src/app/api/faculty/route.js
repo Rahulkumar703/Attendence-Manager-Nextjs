@@ -8,7 +8,7 @@ connect();
 export async function GET() {
 
     try {
-        let response = await Faculty.find();
+        let response = await Faculty.find().sort({ name: -1 });
         if (response) {
             const data = await Promise.all(response.map(async (res) => {
                 const department = await Department.findById(res.department);

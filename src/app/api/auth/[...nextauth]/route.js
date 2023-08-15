@@ -48,6 +48,7 @@ const handler = NextAuth({
                 token.level = user.level;
                 token.varified = user.isVarified;
                 token.userId = user.userId;
+                token.registration_number = user.registration_number;
             }
             return token;
         },

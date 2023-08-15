@@ -8,7 +8,7 @@ connect();
 export async function GET() {
 
     try {
-        let response = await Student.find();
+        let response = await Student.find().sort({ name: -1 });
         if (response) {
             const data = await Promise.all(response.map(async (res) => {
                 const department = await Department.findById(res.department);
@@ -29,11 +29,12 @@ export async function POST(req) {
 
     try {
         const reqBody = await req.json();
-        const { userId, department, name, email, password } = reqBody;
+        const { userId, department, name, registration_number, password, semester } = reqBody;
+        console.log(reqBody);
 
 
         // validating Request body
-        if (!userId || !department || !name || !email || !password) {
+        if (!userId || !department || !name || !registration_number || !password) {
             return NextResponse.json(
                 { message: "Fill all details correctly", type: "error" },
                 { status: 400 }
@@ -41,7 +42,7 @@ export async function POST(req) {
         }
 
         // Check if User already exist
-        const user = await Student.findOne({ $or: [{ email }, { userId }] });
+        const user = await Student.findOne({ $or: [{ registration_number }, { userId }] });
         if (user) {
             return NextResponse.json(
                 { message: "Student is Already Added", type: "info" },
@@ -49,7 +50,7 @@ export async function POST(req) {
         }
 
         // Create The User
-        let newUser = new Student({ userId, department, name, email, password });
+        let newUser = new Student({ userId, department, name, registration_number, password, semester });
         await newUser.save();
 
         const userDepartnemt = await Department.findById(newUser.department);
@@ -65,6 +66,7 @@ export async function POST(req) {
 
     }
     catch (error) {
+        console.log(error);
         return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
     }
 }

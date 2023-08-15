@@ -1,33 +1,35 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiCheck, FiEdit3, FiLoader, FiPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
-import { useRouter } from 'next/navigation'
 import { LuBookPlus } from 'react-icons/lu'
+import SearchBar from '@/components/SearchBar'
+import DashboardHeader from '@/components/DashboardHeader'
 
 export default function Subject() {
 
     const [subjects, setSubjects] = useState([]);
-
+    const [searchValue, setSearchValue] = useState('')
     const [showForm, setShowForm] = useState(false);
+    const [addSubjectLoading, setAddSubjectLoading] = useState(false);
+    const [fetchSubjectsLoading, setFetchSubjectsLoading] = useState(true);
+
+    const [isUpdate, setIsUpdate] = useState(false);
+
     const [subjectForm, setSubjectForm] = useState({
         name: '',
-        code: ''
+        code: '',
+        semester: ''
     });
-    const [isUpdate, setIsUpdate] = useState(false);
+
     const [deleteSubject, setDeleteSubject] = useState({
         popup: false,
         _id: ''
     });
-
-    const [addSubjectLoading, setAddSubjectLoading] = useState(false);
-    const [fetchSubjectsLoading, setFetchSubjectsLoading] = useState(true);
-
-    const router = useRouter();
 
     useEffect(() => {
         const getSubjects = async () => {
@@ -95,7 +97,8 @@ export default function Subject() {
                 setShowForm(false);
                 setSubjectForm({
                     name: '',
-                    code: ''
+                    code: '',
+                    semester: ''
                 })
             }
             toast[data.type](data.message, { toastId: 'addSubject' });
@@ -115,6 +118,7 @@ export default function Subject() {
         window.scrollTo(0, 0);
         setSubjectForm(sub);
     }
+
     const handleDelete = async (_id) => {
         try {
             const res = await fetch('/api/subject', {
@@ -148,13 +152,11 @@ export default function Subject() {
 
     return (
         <div className={styles.dashboard_section}>
-            <div className={styles.section_heading}>
-                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
-                <h2>Manage Subjects</h2>
-            </div>
+            <DashboardHeader heading={'Manage Subjects'} />
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
+                    <SearchBar value={searchValue} setValue={setSearchValue} />
                     <Button
                         varrient="outline"
                         type="button"
@@ -187,7 +189,7 @@ export default function Subject() {
                     <div>
                         <div className={styles.form_input_section}>
                             <h3 className={styles.form_heading}>Subject Details:</h3>
-                            <div className={styles.form_body}>
+                            <div className={`${styles.form_body} ${styles.row}`}>
                                 <Input
                                     type={"text"}
                                     name={"name"}
@@ -207,6 +209,15 @@ export default function Subject() {
                                     disabled={addSubjectLoading}
                                 />
                             </div>
+                            <Input
+                                type={"text"}
+                                name={"semester"}
+                                id={"semester"}
+                                label={"Subject Semester"}
+                                onChange={handleChange}
+                                value={subjectForm.semester}
+                                disabled={addSubjectLoading}
+                            />
                         </div>
                     </div>
                     <Button
@@ -242,37 +253,50 @@ export default function Subject() {
                                 </p>
                             </div>
                             :
-                            subjects?.map(sub => {
-                                return <div key={sub._id} className={`${styles.data}`}>
-                                    <p className={styles.data_id}>{sub.code}</p>
-                                    <p className={styles.data_name}>{sub.name}</p>
+                            subjects
+                                .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || (sub.code + '').includes(searchValue))
+                                .map(sub => {
+                                    return <div key={sub._id} className={`${styles.data}`}>
+                                        <p className={styles.data_id}>{sub.code}</p>
+                                        <p className={styles.data_name}>{sub.name}</p>
 
-                                    <div className={styles.data_actions}>
-                                        {
-                                            deleteSubject.popup && deleteSubject._id === sub._id ?
-                                                <>
-                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(sub._id); }}>
-                                                        <FiCheck size={20} />
-                                                    </Button>
-                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteSubject({ popup: false, _id: '' }) }}>
-                                                        <FiX size={20} />
-                                                    </Button>
-                                                </>
-                                                :
-                                                <>
-                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(sub) }}>
-                                                        <FiEdit3 size={20} />
-                                                    </Button>
-                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteSubject({ popup: true, _id: sub._id }) }}>
-                                                        <AiOutlineDelete size={20} />
-                                                    </Button>
-                                                </>
+                                        <div className={styles.data_actions}>
+                                            {
+                                                deleteSubject.popup && deleteSubject._id === sub._id ?
+                                                    <>
+                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(sub._id); }}>
+                                                            <FiCheck size={20} />
+                                                        </Button>
+                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteSubject({ popup: false, _id: '' }) }}>
+                                                            <FiX size={20} />
+                                                        </Button>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(sub) }}>
+                                                            <FiEdit3 size={20} />
+                                                        </Button>
+                                                        <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteSubject({ popup: true, _id: sub._id }) }}>
+                                                            <AiOutlineDelete size={20} />
+                                                        </Button>
+                                                    </>
 
-                                        }
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            }).reverse()
+                                }).reverse()
 
+                }
+                {
+                    !fetchSubjectsLoading && subjects.length && subjects
+                        .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || (sub.code + '').includes(searchValue)).length === 0 ?
+                        <div className={styles.message_container}>
+                            <FiAlertCircle size={20} />
+                            <p className={styles.message}>
+                                No Subject Matches with your search
+                            </p>
+                        </div>
+                        : null
                 }
             </div>
 

@@ -1,43 +1,45 @@
 "use client"
 import Button from '@/components/Button'
 import React, { useEffect, useState } from 'react'
-import { FiAlertCircle, FiArrowLeft, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiCheck, FiEdit3, FiLoader, FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import styles from '@/styles/admin_dashboard.module.scss'
 import Input from '@/components/Input'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import SearchBar from '@/components/SearchBar'
+import Link from 'next/link'
+import DashboardHeader from '@/components/DashboardHeader'
 
 export default function Student() {
 
-    const router = useRouter();
     const session = useSession();
-
     const [currentUser, setCurrentUser] = useState();
 
     const [students, setStudents] = useState([]);
-
+    const [searchValue, setSearchValue] = useState('')
     const [showForm, setShowForm] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [addStudentLoading, setAddStudentLoading] = useState(false);
+    const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
+    const [fetchStudentsLoading, setFetchStudentsLoading] = useState(true);
+    const [departments, setDepartments] = useState();
+
     const [studentForm, setStudentForm] = useState({
         name: '',
-        email: '',
+        registration_number: '',
         userId: '',
+        semester: '',
         department: { _id: '', name: '' }
     });
-
-    const [isUpdate, setIsUpdate] = useState(false);
 
     const [deleteStudent, setDeleteStudent] = useState({
         popup: false,
         _id: ''
     });
 
-    const [addStudentLoading, setAddStudentLoading] = useState(false);
-    const [fetchDepartmentLoading, setFetchDepartmentLoading] = useState(true);
-    const [fetchStudentsLoading, setFetchStudentsLoading] = useState(true);
 
-    const [departments, setDepartments] = useState();
 
 
     useEffect(() => {
@@ -106,7 +108,7 @@ export default function Student() {
 
         try {
 
-            if (studentForm.name === '' || studentForm.email === '' || studentForm.userId === '' || studentForm.department === '') {
+            if (studentForm.name === '' || studentForm.registration_number === '' || studentForm.userId === '' || studentForm.department === '' || studentForm.semester === '') {
                 toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
                 return;
             }
@@ -119,6 +121,7 @@ export default function Student() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+
                 body: JSON.stringify(
                     {
                         ...studentForm,
@@ -142,7 +145,7 @@ export default function Student() {
                 setShowForm(false);
                 setStudentForm({
                     name: '',
-                    email: '',
+                    registration_number: '',
                     userId: '',
                     department: { _id: '', name: '' }
                 })
@@ -203,13 +206,11 @@ export default function Student() {
 
     return (
         <div className={styles.dashboard_section}>
-            <div className={styles.section_heading}>
-                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
-                <h2>Manage Students</h2>
-            </div>
+            <DashboardHeader heading={'Manage Students'} />
 
             <div className={styles.form_container}>
                 <div className={styles.form_toggle_btn}>
+                    <SearchBar value={searchValue} setValue={setSearchValue} />
                     <Button
                         varrient="outline"
                         type="button"
@@ -218,7 +219,7 @@ export default function Student() {
                             setIsUpdate(false);
                             setStudentForm({
                                 name: '',
-                                email: '',
+                                registration_number: '',
                                 userId: '',
                                 department: { _id: '', name: '' }
                             })
@@ -258,12 +259,12 @@ export default function Student() {
                                     disabled={addStudentLoading}
                                 />
                                 <Input
-                                    type={"email"}
-                                    name={"email"}
-                                    id={"email"}
-                                    label={"Email"}
+                                    type={"number"}
+                                    name={"registration_number"}
+                                    id={"registration_number"}
+                                    label={"Registration Number"}
                                     onChange={handleChange}
-                                    value={studentForm.email}
+                                    value={studentForm.registration_number}
                                     disabled={addStudentLoading}
                                 />
                             </div>
@@ -283,18 +284,28 @@ export default function Student() {
                                     disabled={addStudentLoading}
                                 />
                                 <Input
-                                    type={"select"}
-                                    options={departments}
-                                    name={"department"}
-                                    id={"department"}
-                                    label={"Branch"}
+                                    type={"number"}
+                                    name={"semester"}
+                                    id={"semester"}
+                                    label={"Student Semester"}
                                     onChange={handleChange}
-                                    value={studentForm.department.name}
-                                    disabled={fetchDepartmentLoading}
-                                />handleDelete
+                                    value={studentForm.semester}
+                                    disabled={addStudentLoading}
+                                />
                             </div>
                         </div>
                     </div>
+                    <Input
+                        type={"select"}
+                        options={departments}
+                        name={"department"}
+                        id={"department"}
+                        label={"Branch"}
+                        onChange={handleChange}
+                        value={studentForm.department.name}
+                        disabled={fetchDepartmentLoading}
+                        className={styles.fullWidth}
+                    />
                     <Button
                         className={styles.form_submit_btn}
                         type="submit"
@@ -328,69 +339,121 @@ export default function Student() {
                                 </p>
                             </div>
                             :
-                            students?.map(stu => {
-                                const department = () => {
-                                    let depName = stu?.department?.name?.split(' ') || [' '];
-                                    depName = depName[depName?.length - 1];
+                            students
+                                .filter((stu) => stu.name.toLowerCase().includes(searchValue.toLowerCase()) || (stu.userId + '').includes(searchValue) || (stu.registration_number + '').toLowerCase().includes(searchValue.toLowerCase()))
+                                .map(stu => {
+                                    const department = () => {
+                                        let depName = stu?.department?.name?.split(' ') || [' '];
+                                        depName = depName[depName?.length - 1];
 
-                                    switch (depName) {
-                                        case "(CSE)":
-                                            depName = "cse";
-                                            return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
-                                        case "(CE)":
-                                            depName = "civil";
-                                            return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
-                                        case "(ME)":
-                                            depName = "mech";
-                                            return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
-                                        case "(EEE)":
-                                            depName = "eee";
-                                            return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
-                                        case "(CA)":
-                                            depName = "ca";
-                                            return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
-                                        case "(AI)":
-                                            depName = "ai";
-                                            return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
-                                        default:
-                                            depName = "N/A";
-                                            return <p className={`${styles.data_department} ${styles.na}`}>{depName}</p>
-
-                                    }
-                                }
-                                return <div key={stu._id} className={`${styles.data}`}>
-                                    <p className={styles.data_id}>{stu.userId}</p>
-                                    <div>
-                                        <p className={styles.data_name}>{stu.name}</p>
-                                        <p className={styles.data_email}>{stu.email}</p>
-                                    </div>
-                                    {department()}
-                                    <div className={styles.data_actions}>
-                                        {
-                                            deleteStudent.popup && deleteStudent._id === stu._id ?
-                                                <>
-                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { handleDelete(stu._id); }}>
-                                                        <FiCheck size={20} />
-                                                    </Button>
-                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { setDeleteStudent({ popup: false, _id: '' }) }}>
-                                                        <FiX size={20} />
-                                                    </Button>
-                                                </>
-                                                :
-                                                <>
-                                                    <Button type="button" varrient="filled" className={styles.edit_btn} onClick={() => { handleEdit(stu) }}>
-                                                        <FiEdit3 size={20} />
-                                                    </Button>
-                                                    <Button type="button" varrient="filled" className={styles.delete_btn} onClick={() => { setDeleteStudent({ popup: true, _id: stu._id }) }}>
-                                                        <AiOutlineDelete size={20} />
-                                                    </Button>
-                                                </>
+                                        switch (depName) {
+                                            case "(CSE)":
+                                                depName = "cse";
+                                                return <p className={`${styles.data_department} ${styles.cse}`}>{depName}</p>
+                                            case "(CE)":
+                                                depName = "civil";
+                                                return <p className={`${styles.data_department} ${styles.civil}`}>{depName}</p>
+                                            case "(ME)":
+                                                depName = "mech";
+                                                return <p className={`${styles.data_department} ${styles.mech}`}>{depName}</p>
+                                            case "(EEE)":
+                                                depName = "eee";
+                                                return <p className={`${styles.data_department} ${styles.eee}`}>{depName}</p>
+                                            case "(CA)":
+                                                depName = "ca";
+                                                return <p className={`${styles.data_department} ${styles.ca}`}>{depName}</p>
+                                            case "(AI)":
+                                                depName = "ai";
+                                                return <p className={`${styles.data_department} ${styles.ai}`}>{depName}</p>
+                                            default:
+                                                depName = stu?.department?.name;
+                                                return <p className={`${styles.data_department} ${styles.other}`}>{depName}</p>
 
                                         }
-                                    </div>
-                                </div>
-                            }).reverse()
+                                    }
+                                    return <Link href={`student/${stu._id}`} key={stu._id} className={`${styles.data}`}>
+                                        <p className={styles.data_id}>{stu.userId}</p>
+                                        <div>
+                                            <p className={styles.data_name}>{stu.name}</p>
+                                            <p className={styles.data_registration_number}>{stu.registration_number}</p>
+                                        </div>
+                                        {department()}
+                                        <div className={styles.data_actions}>
+                                            {
+                                                deleteStudent.popup && deleteStudent._id === stu._id ?
+                                                    <>
+                                                        <Button
+                                                            type="button"
+                                                            varrient="filled"
+                                                            className={styles.delete_btn}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleDelete(stu._id);
+                                                            }}
+                                                        >
+                                                            <FiCheck size={20} />
+                                                        </Button>
 
+                                                        <Button
+                                                            type="button"
+                                                            varrient="filled"
+                                                            className={styles.edit_btn}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setDeleteStudent({ popup: false, _id: '' });
+                                                            }}
+                                                        >
+                                                            <FiX size={20} />
+                                                        </Button>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <Button
+                                                            type="button"
+                                                            varrient="filled"
+                                                            className={styles.edit_btn}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleEdit(stu);
+                                                            }}
+                                                        >
+                                                            <FiEdit3 size={20} />
+                                                        </Button>
+
+                                                        <Button
+                                                            type="button"
+                                                            varrient="filled"
+                                                            className={styles.delete_btn}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setDeleteStudent({ popup: true, _id: stu._id });
+                                                            }}
+                                                        >
+                                                            <AiOutlineDelete size={20} />
+                                                        </Button>
+                                                    </>
+
+                                            }
+                                        </div>
+                                    </Link>
+                                }).reverse()
+
+                }
+                {
+                    !fetchStudentsLoading && students.length && students
+                        .filter((stu) => stu.name.toLowerCase().includes(searchValue.toLowerCase()) || (stu.userId + '').includes(searchValue) || (stu.registration_number + '').includes(searchValue.toLowerCase())).length === 0 ?
+
+                        <div className={styles.message_container}>
+                            <FiAlertCircle size={20} />
+                            <p className={styles.message}>
+                                No Students Matches with your search
+                            </p>
+                        </div>
+                        : null
                 }
             </div>
 

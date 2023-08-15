@@ -1,0 +1,23 @@
+.dashboard_header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: .5rem 1rem;
+
+    .back_btn {
+        cursor: pointer;
+        padding: .5rem;
+        border-radius: .5rem;
+
+        &:hover {
+            background: var(--transparent);
+        }
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-style: double;
+    }
+}

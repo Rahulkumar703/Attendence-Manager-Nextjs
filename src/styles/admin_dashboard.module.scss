@@ -9,7 +9,7 @@ section.dashboard {
     margin-left: 9rem;
     width: 100%;
     padding: 1rem;
-    gap: 1rem;
+    gap: 1.5rem;
 
     &.loader {
         display: grid;
@@ -17,36 +17,16 @@ section.dashboard {
         font-size: 2rem;
     }
 
-    &>.section_heading {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        padding: .5rem 1rem;
-
-        .back_btn {
-            cursor: pointer;
-            padding: .5rem;
-            border-radius: .5rem;
-
-            &:hover {
-                background: var(--transparent);
-            }
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            text-decoration: underline;
-            text-decoration-style: double;
-        }
-    }
 
     .form_container {
         display: flex;
         flex-direction: column;
 
         .form_toggle_btn {
-            margin-left: auto;
+            display: grid;
+            align-items: center;
+            grid-template-columns: 3fr 1fr;
+            gap: 30%;
         }
 
         .form {
@@ -68,6 +48,10 @@ section.dashboard {
                 gap: 1rem;
                 overflow: visible;
                 margin-top: 1rem;
+                background: var(--transparent-light);
+                border: 1px solid var(--transparent);
+                padding: 1rem;
+                border-radius: 1rem;
             }
 
             .form_input_section {
@@ -81,11 +65,20 @@ section.dashboard {
                 }
 
                 .form_body {
+                    width: 100%;
                     display: flex;
                     flex-direction: column;
                     gap: 1rem;
+
+                    &.row {
+                        flex-direction: row;
+                    }
                 }
 
+            }
+
+            .fullWidth {
+                grid-column: 1/-1;
             }
 
             .form_submit_btn {
@@ -125,17 +118,18 @@ section.dashboard {
         .data {
             display: flex;
             width: 100%;
-            height: auto;
+            min-height: 6rem;
             font-size: 1.5rem;
             align-items: center;
             gap: 2rem;
-            border-bottom: 5px solid var(--transparent-light);
             padding: 1rem;
             transition: .3s ease-in-out;
             border-radius: 1rem;
+            border: 1px solid var(--transparent);
 
             &:hover {
                 box-shadow: 0 1rem 2rem -.5rem var(--shadow);
+                transform: scale(1.01);
 
                 .data_actions {
                     opacity: 1;
@@ -150,14 +144,15 @@ section.dashboard {
 
             .data_name {
                 font-weight: 600;
-                line-height: 100%;
+                line-height: 1.8rem;
+                text-transform: capitalize;
             }
 
+            .data_registration_number,
             .data_email {
                 font-weight: 400;
-                font-size: 1.4rem;
-                line-height: 100%;
-                opacity: .8;
+                font-size: 1.3rem;
+                opacity: .7;
             }
 
             .data_department {
@@ -173,31 +168,31 @@ section.dashboard {
                 color: var(--black);
 
                 &.civil {
-                    background: #e7c27e;
+                    background: #FF6B6B;
                 }
 
                 &.mech {
-                    background: #b18bf9;
+                    background: #98FF98;
                 }
 
                 &.cse {
-                    background: #f9ac60;
+                    background: #FFD700;
                 }
 
                 &.eee {
-                    background: #7099fa;
+                    background: #a547e8;
                 }
 
                 &.ca {
-                    background: #f49874;
+                    background: #3ca0fe;
                 }
 
                 &.ai {
-                    background: #f1669c;
+                    background: #f677df;
                 }
 
-                &.na {
-                    background: var(--error);
+                &.other {
+                    background: #d1eafd;
                 }
             }
 
@@ -217,6 +212,27 @@ section.dashboard {
                     background: linear-gradient(to right, #fb828a, #f49d83);
                     scale: .9;
                 }
+            }
+        }
+    }
+
+    .semester_container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        gap: 1rem;
+
+        .semester_links {
+            padding: 2rem 1rem;
+            border-radius: 1rem;
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            transition: .3s ease-in-out;
+            border: .5px solid var(--transparent);
+            background: var(--transparent-dark);
+
+            &:hover {
+                background: var(--transparent);
             }
         }
     }

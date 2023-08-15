@@ -1,20 +1,57 @@
-"use client"
-import SearchBar from '@/components/SearchBar'
+import DashboardHeader from "@/components/DashboardHeader";
 import styles from '@/styles/admin_dashboard.module.scss'
-import { useRouter } from 'next/navigation'
-import { FiArrowLeft } from 'react-icons/fi'
+import Link from "next/link";
 
-export default function Subject() {
+export default function ClassesPage() {
 
-    const router = useRouter()
+    const semesterArray = [
+        {
+            number: 1,
+            prefix: 'st'
+        },
+        {
+            number: 2,
+            prefix: 'st'
+        },
+        {
+            number: 3,
+            prefix: 'rd'
+        },
+        {
+            number: 4,
+            prefix: 'th'
+        },
+        {
+            number: 5,
+            prefix: 'th'
+        },
+        {
+            number: 6,
+            prefix: 'th'
+        },
+        {
+            number: 7,
+            prefix: 'th'
+        },
+        {
+            number: 8,
+            prefix: 'th'
+        },
+    ]
 
     return (
         <div className={styles.dashboard_section}>
-            <div className={styles.section_heading}>
-                <FiArrowLeft className={styles.back_btn} size={20} onClick={() => { router.back() }} />
-                <h2>Manage Classes</h2>
+            <DashboardHeader heading={'Manage Classes'} />
+
+            <div className={styles.semester_container}>
+                {
+                    semesterArray.map(sem => {
+                        return <Link href={`classes/${sem.number}`} key={sem.number} className={styles.semester_links}>
+                            <p>{sem.number}<sup>{sem.prefix}</sup> Semester</p>
+                        </Link>
+                    })
+                }
             </div>
-            <SearchBar />
         </div>
     )
 }

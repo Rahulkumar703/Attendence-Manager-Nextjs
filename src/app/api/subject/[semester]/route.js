@@ -1,4 +1,4 @@
-import Student from "@/models/Student";
+import Subject from "@/models/Subject";
 import connect from "@/db/config";
 import { NextResponse } from "next/server";
 
@@ -7,16 +7,17 @@ connect();
 export async function GET(req, { params }) {
 
     try {
-        const { id } = await params;
+        const { semester } = await params;
 
-        const response = await Student.findById(id);
+
+        const response = await Subject.find({ semester });
         if (response)
             return NextResponse.json(
-                { message: 'Student Fetched Successfully', type: 'success', data: response },
+                { message: 'Subject Fetched Successfully', type: 'success', subjects: response },
                 { status: 200 }
             );
         else return NextResponse.json(
-            { message: 'Student Not Found', type: 'error' },
+            { message: 'Subject Not Found', type: 'error' },
             { status: 404 }
         );
     }
