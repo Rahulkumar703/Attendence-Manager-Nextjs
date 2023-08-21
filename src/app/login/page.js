@@ -30,7 +30,6 @@ export default function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { signal } = new AbortController()
         try {
             setIsLoading(true);
             const res = await fetch('/api/login', {
@@ -40,7 +39,7 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify(loginForm),
                 cache: 'no-store'
-            }, { signal })
+            })
 
             const data = await res.json();
 

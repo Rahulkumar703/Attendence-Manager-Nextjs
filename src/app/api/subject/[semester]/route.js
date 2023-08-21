@@ -1,19 +1,20 @@
 import Subject from "@/models/Subject";
 import connect from "@/db/config";
 import { NextResponse } from "next/server";
+import Faculty from "@/models/Faculty";
 
 connect();
 
 export async function GET(req, { params }) {
 
     try {
-        const { semester } = await params;
+        const { semester } = params;
 
+        const subjects = await Subject.find({ semester }).sort({ name: -1 });
 
-        const response = await Subject.find({ semester });
-        if (response)
+        if (subjects)
             return NextResponse.json(
-                { message: 'Subject Fetched Successfully', type: 'success', subjects: response },
+                { message: 'Subject Fetched Successfully', type: 'success', subjects },
                 { status: 200 }
             );
         else return NextResponse.json(

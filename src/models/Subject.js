@@ -17,7 +17,12 @@ const SubjectSchema = mongoose.Schema({
         required: [true, "Please enter Subject Semester."],
         trim: true
     },
+    faculty: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "faculty",
+        trim: true,
+    }
 }, { timestamps: true })
 
-const Subject = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);
+const Subject = mongoose.models.subject || mongoose.model('subject', SubjectSchema);
 export default Subject;

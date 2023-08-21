@@ -2,13 +2,17 @@ import Department from "@/models/Department";
 import Subject from "@/models/Subject";
 import connect from "@/db/config";
 import { NextResponse } from "next/server";
+import Faculty from "@/models/Faculty";
 
 connect();
 
 export async function GET() {
 
     try {
-        let response = await Subject.find().sort({ name: -1 });
+        let response = await Subject.find()
+            .populate({ path: 'faculty', model: Faculty })
+            .sort({ name: -1 });
+
         if (response) {
             return NextResponse.json({ message: 'Subjects Fetched Successfully', type: 'success', subjects: response }, { status: 200 });
         }
@@ -20,7 +24,6 @@ export async function GET() {
 }
 
 export async function POST(req) {
-
 
     try {
         const reqBody = await req.json();
@@ -97,12 +100,14 @@ export async function PUT(req) {
         connect();
 
         const reqBody = await req.json();
+        console.log(reqBody);
 
         const updatedData = await Subject.updateOne({ _id: reqBody._id }, reqBody);
 
-        return NextResponse.json({
-            message: "Subject Updated Successfully", type: 'success', updatedData
-        }, { status: 200 });
+        if (updatedData)
+            return NextResponse.json({
+                message: "Subject Updated Successfully", type: 'success'
+            }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ type: "error", message: error.message }, { status: 500 });

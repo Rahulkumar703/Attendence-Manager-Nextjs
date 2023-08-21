@@ -22,7 +22,8 @@ const FacultySchema = mongoose.Schema({
         lowercase: true
     },
     department: {
-        type: mongoose.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "department",
         required: [true, "Please enter your Department."],
         trim: true,
     },
@@ -39,16 +40,13 @@ const FacultySchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    classes: {
-        type: [
-            {
-                subject: {
-                    type: mongoose.ObjectId,
-                    required: [true, "Please enter the Subject."],
-                }
-            }
-        ]
-    },
+    subjects: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'subject',
+            trim: true,
+        }
+    ],
     forgotPasswordToken: String,
     verifyToken: String,
 }, { timestamps: true })

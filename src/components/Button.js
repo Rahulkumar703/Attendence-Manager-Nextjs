@@ -2,7 +2,7 @@ import style from './styles/Button.module.scss';
 import { BiLoaderCircle } from 'react-icons/bi'
 
 export default function Button(props) {
-    const { onClick, type, varrient, children, loading, className } = props;
+    const { onClick = () => { }, type, varrient, children, loading, className } = props;
 
     const handleClick = (e) => {
         onClick(e);

@@ -1,21 +1,24 @@
-import Department from "@/models/Department";
 import Faculty from "@/models/Faculty";
 import connect from "@/db/config";
 import { NextResponse } from "next/server";
+import Department from "@/models/Department";
+import Subject from "@/models/Subject";
 
 connect();
 
 export async function GET() {
 
     try {
-        let response = await Faculty.find().sort({ name: -1 });
-        if (response) {
-            const data = await Promise.all(response.map(async (res) => {
-                const department = await Department.findById(res.department);
-                return { ...res._doc, department };
-            }));
+        let response = await Faculty.find()
+            .populate([
+                { path: 'department', model: Department },
+                { path: 'subjects', model: Subject }
+            ])
+            .sort({ name: -1 });
 
-            return NextResponse.json({ message: 'Faculties Fetched Successfully', type: 'success', faculties: data }, { status: 200 });
+        if (response) {
+
+            return NextResponse.json({ message: 'Faculties Fetched Successfully', type: 'success', faculties: response }, { status: 200 });
         }
         else return NextResponse.json({ message: 'No faculties Found', type: 'error' }, { status: 404 });
     }
@@ -53,16 +56,16 @@ export async function POST(req) {
         let newUser = new Faculty({ userId, department, name, email, password });
         await newUser.save();
 
-        const userDepartnemt = await Department.findById(newUser.department);
-        newUser = { ...newUser._doc, department: userDepartnemt };
+        const savedUser = await Faculty.findById(newUser._id)
+            .populate('department');
 
-        delete newUser.password;
-
-        // returning response
-        return NextResponse.json(
-            { message: "Faculty Added Successfully", type: 'success', faculty: newUser },
-            { status: 200 }
-        );
+        if (savedUser) {
+            // returning response
+            return NextResponse.json(
+                { message: "Faculty Added Successfully", type: 'success', faculty: savedUser },
+                { status: 200 }
+            );
+        }
 
     }
     catch (error) {

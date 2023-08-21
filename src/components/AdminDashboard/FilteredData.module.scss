@@ -1,0 +1,122 @@
+.data_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .message_container {
+        background: var(--transparent);
+        padding: 1rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .message {
+            font-size: 1.5rem;
+        }
+    }
+
+    .data {
+        display: flex;
+        width: 100%;
+        min-height: 6rem;
+        font-size: 1.5rem;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem;
+        transition: .3s ease-in-out;
+        border-radius: 1rem;
+        border: 1px solid var(--transparent);
+
+        .data_actions {
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+            opacity: 0;
+            transition: .3s ease-in-out;
+
+            .edit_btn {
+                background: linear-gradient(to right, #82a4fb, #83cef4);
+                scale: .9;
+            }
+
+            .delete_btn {
+                background: linear-gradient(to right, #fb828a, #f49d83);
+                scale: .9;
+            }
+        }
+
+        &:hover {
+            box-shadow: 0 1rem 2rem -.5rem var(--shadow);
+            transform: scale(1.01);
+
+            .data_actions {
+                opacity: 1;
+            }
+        }
+
+        .data_id {
+            font-weight: 800;
+            opacity: .4;
+            letter-spacing: .1rem;
+        }
+
+        .data_name {
+            font-weight: 600;
+            line-height: 1.5rem;
+            text-transform: capitalize;
+        }
+
+        .data_registration_number,
+        .data_email {
+            font-weight: 400;
+            font-size: 1.3rem;
+            opacity: .7;
+        }
+
+        .data_faculty {
+            text-transform: uppercase;
+        }
+
+        .data_department {
+            text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 1rem;
+            padding: .5rem 1.6rem;
+            border-radius: 1rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--black);
+
+            &.civil {
+                background: #FF6B6B;
+            }
+
+            &.mech {
+                background: #98FF98;
+            }
+
+            &.cse {
+                background: #FFD700;
+            }
+
+            &.eee {
+                background: #a547e8;
+            }
+
+            &.ca {
+                background: #3ca0fe;
+            }
+
+            &.ai {
+                background: #f677df;
+            }
+
+            &.other {
+                background: #d1eafd;
+            }
+        }
+    }
+}

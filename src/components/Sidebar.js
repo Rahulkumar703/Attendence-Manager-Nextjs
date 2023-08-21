@@ -41,6 +41,7 @@ export default function Sidebar({ links }) {
             {
                 links.map((link, index) => {
                     return <Link
+                        prefetch={true}
                         key={index}
                         href={link.href}
                         className={`${styles.sidebar_links} ${pathname === link.href ? styles.active : ''}`}

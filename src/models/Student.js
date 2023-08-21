@@ -2,33 +2,34 @@ import mongoose from "mongoose";
 import bcrypt from 'bcrypt'
 
 const classesSchema = mongoose.Schema({
-    classes: {
-        type: [
-            {
-                subject: {
-                    type: mongoose.ObjectId,
-                    required: [true, "Please enter the Subject."],
-                    unique: true,
-                },
-                faculty: mongoose.ObjectId,
-                attendence: {
-                    type: [
-                        {
-                            date: {
-                                type: Date,
-                                default: Date.now()
-                            },
-                            present: {
-                                type: Boolean,
-                                default: false
-                            }
+    type: [
+        {
+            subject: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'subject',
+            },
+            faculty: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'faculty'
+            },
+            attendence: {
+                type: [
+                    {
+                        date: {
+                            type: Date,
+                            default: Date.now()
+                        },
+                        present: {
+                            type: Boolean,
+                            default: false
                         }
-                    ]
-                }
+                    }
+                ]
             }
-        ]
-    }
-});
+        }
+    ]
+}
+);
 
 
 
@@ -54,7 +55,6 @@ const StudentSchema = mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        unique: true,
         lowercase: true
     },
     password: {
@@ -63,7 +63,8 @@ const StudentSchema = mongoose.Schema({
         select: false
     },
     department: {
-        type: mongoose.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'department',
         required: [true, "Please enter your Department."],
         trim: true,
     },
@@ -89,6 +90,7 @@ const StudentSchema = mongoose.Schema({
 
 
 
+
 StudentSchema.pre('save', async function (next) {
     if (!this.isModified('password')) next();
 
@@ -96,8 +98,10 @@ StudentSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, salt);
     this.password = hashedPassword;
+});
 
-})
+
+
 
 
 const Student = mongoose.models.student || mongoose.model('student', StudentSchema);

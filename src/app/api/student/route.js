@@ -2,20 +2,32 @@ import Department from "@/models/Department";
 import Student from "@/models/Student";
 import connect from "@/db/config";
 import { NextResponse } from "next/server";
+import Subject from "@/models/Subject";
+import Faculty from "@/models/Faculty";
 
 connect();
 
 export async function GET() {
 
     try {
-        let response = await Student.find().sort({ name: -1 });
-        if (response) {
-            const data = await Promise.all(response.map(async (res) => {
-                const department = await Department.findById(res.department);
-                return { ...res._doc, department };
-            }));
-
-            return NextResponse.json({ message: 'Students Fetched Successfully', type: 'success', students: data }, { status: 200 });
+        let students = await Student.find()
+            .populate({ path: 'department', model: Department })
+            .populate({
+                path: 'classes',
+                populate: [
+                    {
+                        path: 'subject',
+                        model: Subject
+                    },
+                    {
+                        path: 'faculty',
+                        model: Faculty
+                    }
+                ]
+            })
+            .sort({ name: -1 });
+        if (students) {
+            return NextResponse.json({ message: 'Students Fetched Successfully', type: 'success', students }, { status: 200 });
         }
         else return NextResponse.json({ message: 'No Students Found', type: 'error' }, { status: 404 });
     }
@@ -26,14 +38,12 @@ export async function GET() {
 
 export async function POST(req) {
 
-
     try {
         const reqBody = await req.json();
         const { userId, department, name, registration_number, password, semester } = reqBody;
-        console.log(reqBody);
-
 
         // validating Request body
+
         if (!userId || !department || !name || !registration_number || !password) {
             return NextResponse.json(
                 { message: "Fill all details correctly", type: "error" },
@@ -66,7 +76,6 @@ export async function POST(req) {
 
     }
     catch (error) {
-        console.log(error);
         return NextResponse.json({ type: "error", message: error.message }, { status: 500 });
     }
 }

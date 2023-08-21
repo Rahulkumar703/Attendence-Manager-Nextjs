@@ -11,12 +11,32 @@ import { toast } from 'react-toastify';
 
 export default function SemesterPage({ params }) {
 
-    const [subjects, setSubjects] = useState({
+    const [classes, setClasses] = useState({
         data: [],
         loading: true
     })
+    const [faculties, setFaculties] = useState({
+        data: [],
+        loading: true
+    })
+    const [subjects, setSubjects] = useState({
+        data: [],
+        loading: true
+
+    })
+
+
+    const [classForm, setClassForm] = useState({
+        data: {
+            userId: { _id: '', name: '' },
+            subjectId: { _id: '', name: '' }
+        },
+        loading: false
+    })
+
     const [searchValue, setSearchValue] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
 
     const semesterHeading = () => {
         switch (params.semester) {
@@ -28,10 +48,54 @@ export default function SemesterPage({ params }) {
     }
 
     useEffect(() => {
+
+        const getClasses = async () => {
+            try {
+                const res = await fetch(`/api/classes`, { next: { revalidate: 24 * 60 * 60 } });
+
+                const data = await res.json();
+
+                if (res.status === 200) {
+                    setClasses(prev => ({ ...prev, data: data.classes }))
+                }
+
+                toast[data.type](data.message, { toastId: 'getClass' });
+
+            } catch (error) {
+                toast.error(error.message, { toastId: 'getClassError' });
+            }
+            finally {
+                setClasses(prev => ({ ...prev, loading: false }))
+            }
+        }
+        const getFaculties = async () => {
+            try {
+                const res = await fetch(`/api/faculty`, { next: { revalidate: 24 * 60 * 60 } });
+
+                const data = await res.json();
+
+                if (res.status === 200) {
+                    setFaculties(prev => ({ ...prev, data: data.faculties }))
+                }
+
+            } catch (error) {
+                toast.error(error.message, { toastId: 'getFacultiesError' });
+            }
+            finally {
+                setFaculties(prev => ({ ...prev, loading: false }))
+            }
+        }
+
+        getClasses();
+        getFaculties();
+
+    }, []);
+
+
+    useEffect(() => {
         const getSubjects = async () => {
             try {
-
-                const res = await fetch(`/api/subject/${params.semester}`);
+                const res = await fetch(`/api/subject/${params.semester}`, { next: { revalidate: 24 * 60 * 60 } });
 
                 const data = await res.json();
 
@@ -39,17 +103,46 @@ export default function SemesterPage({ params }) {
                     setSubjects(prev => ({ ...prev, data: data.subjects }))
                 }
 
-                toast[data.type](data.message, { toastId: 'getSemesterSubjects' });
-
             } catch (error) {
-                toast.error(error.message, { toastId: 'getSemesterSubjectsError' });
+                toast.error(error.message, { toastId: 'getSubjectsError' });
             }
             finally {
                 setSubjects(prev => ({ ...prev, loading: false }))
             }
         }
         getSubjects();
+
     }, [params])
+
+    const handleChange = async (e) => {
+        console.log(classForm);
+        setClassForm(prev => ({ ...prev, data: { ...prev.data, [e.target.name]: e.target.value } }));
+        console.log(classForm);
+    }
+    const handleSubmit = async () => {
+        try {
+            const res = await fetch(`/api/classes`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: classForm.data.userId._id, subjectId: classForm.data.subjectId._id })
+            });
+
+            const data = await res.json();
+
+            if (res.status === 200) {
+                setClasses(prev => ({ ...prev, data: [...prev.data, data.classes] }))
+            }
+            toast[data.type](data.message, { toastId: 'addClass' });
+
+        } catch (error) {
+            toast.error(error.message, { toastId: 'addClassError' });
+        }
+        finally {
+            setSubjects(prev => ({ ...prev, loading: false }))
+        }
+    }
 
     return (
         <div className={styles.dashboard_section}>
@@ -64,8 +157,14 @@ export default function SemesterPage({ params }) {
                         varrient="outline"
                         type="button" onClick={() => {
                             setShowForm(prev => !prev);
-                            // setIsUpdate(false);
-                            // setDepartmentForm({ name: '', code: '' })
+                            setIsUpdate(false);
+                            setClassForm({
+                                data: {
+                                    userId: { _id: '', name: '' },
+                                    subjectId: { _id: '', name: '' }
+                                },
+                                loading: false
+                            })
                         }}
                     >
                         {
@@ -83,32 +182,35 @@ export default function SemesterPage({ params }) {
                     </Button>
 
                 </div>
-                {/* <form
+                <form
                     method="POST"
                     className={`${styles.form} ${styles.row} ${showForm ? styles.active : ''}`}
                     onSubmit={handleSubmit}
                 >
                     <div>
                         <div className={styles.form_input_section}>
-                            <h3 className={styles.form_heading}>Department Details:</h3>
+                            <h3 className={styles.form_heading}>Class Details:</h3>
                             <div className={styles.form_body}>
                                 <Input
-                                    type={"text"}
-                                    name={"name"}
-                                    id={"name"}
-                                    label={"Department Name"}
+                                    type={"select"}
+                                    name={"userId"}
+                                    id={"userId"}
+                                    label={"Class Faculty"}
                                     onChange={handleChange}
-                                    value={departmentForm.name}
-                                    disabled={addDepartmentLoading}
+                                    value={classForm.data.userId.name}
+                                    disabled={faculties.loading}
+                                    options={faculties.data}
                                 />
+
                                 <Input
-                                    type={"text"}
-                                    name={"code"}
-                                    id={"code"}
-                                    label={"Department Code"}
+                                    type={"select"}
+                                    name={"subjectId"}
+                                    id={"subjectId"}
+                                    label={"Class Subject"}
                                     onChange={handleChange}
-                                    value={departmentForm.code}
-                                    disabled={addDepartmentLoading}
+                                    value={classForm.data.subjectId.name}
+                                    disabled={subjects.loading}
+                                    options={subjects.data}
                                 />
                             </div>
                         </div>
@@ -117,52 +219,57 @@ export default function SemesterPage({ params }) {
                         className={styles.form_submit_btn}
                         type="submit"
                         varrient="filled"
-                        onClick={handleSubmit}
-                        loading={addDepartmentLoading}
+                        loading={classForm.loading}
                     >
                         <LuBookPlus size={20} />
                         {
                             isUpdate ?
-                                'Update Department'
+                                'Update Class'
                                 :
-                                'Add Department'
+                                'Assign Class'
                         }
                     </Button>
-                </form> */}
+                </form>
             </div>
 
             <div className={styles.data_container}>
                 {
-                    subjects.loading ?
+                    classes.loading ?
                         <div className={styles.message_container}>
                             <FiLoader size={20} className={styles.spin} />
                             <p className={styles.message}>
-                                Please wait Fetching Departments...
+                                Please wait Fetching Classes for this Semester ...
                             </p>
                         </div>
                         :
-                        !subjects.data.length ?
+                        !classes.data.length ?
                             <div className={styles.message_container}>
                                 <FiAlertCircle size={20} />
                                 <p className={styles.message}>
-                                    No Subjects are Added for this Semester, Please add first.
+                                    No Classes are Added for this Semester, Please add first.
                                 </p>
                             </div>
                             :
-                            subjects.data
-                                .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || (sub.code + '').includes(searchValue))
-                                .map((sub) => {
-                                    return <div className={styles.data} key={sub._id}>
+                            classes.data
+                                .filter((cls) => cls.subject.name.toLowerCase().includes(searchValue.toLowerCase()) || cls.faculty.name.includes(searchValue.toLowerCase()))
+                                .map((cls) => {
+                                    return <div className={styles.data} key={cls._id}>
 
-                                        <p className={styles.data_id}>{sub.code}</p>
-                                        <p className={styles.data_name}>{sub.name}</p>
+                                        <p className={styles.data_name}>{cls.subject.name}</p>
+                                        <p className={styles.data_faculty}>
+                                            {cls.faculty ? cls.faculty.name : 'No Faclty'}
+                                        </p>
+
+                                        <div className={styles.data_actions}>
+                                        </div>
 
                                     </div>
-                                }).sort((a, b) => a.semester - b.semester)
+                                })
                 }
                 {
-                    !subjects.loading && subjects.data.length && subjects.data
-                        .filter((sub) => sub.name.toLowerCase().includes(searchValue.toLowerCase()) || (sub.code + '').includes(searchValue)).length === 0 ?
+                    !classes.loading && classes.data.length && classes.data
+                        .filter((cls) => cls.subject.name.toLowerCase().includes(searchValue.toLowerCase()) || cls.faculty.name.includes(searchValue.toLowerCase()))
+                        .length === 0 ?
                         <div className={styles.message_container}>
                             <FiAlertCircle size={20} />
                             <p className={styles.message}>

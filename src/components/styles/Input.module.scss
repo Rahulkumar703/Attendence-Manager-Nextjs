@@ -64,7 +64,6 @@
         position: relative;
 
         .select_input {
-            cursor: pointer;
             padding-right: 5rem;
         }
 
@@ -76,7 +75,8 @@
             height: calc(4rem - 4px);
             border-radius: .5rem;
             transition: .3s ease-in-out;
-            pointer-events: none;
+            cursor: pointer;
+            z-index: 1;
 
             .icon {
                 position: absolute;
@@ -84,11 +84,12 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
             }
+
+            &:hover {
+                background: var(--transparent);
+            }
         }
 
-        input:hover+.dropdown_icon {
-            background: var(--transparent);
-        }
 
         input:disabled:hover+.dropdown_icon {
             background: none;

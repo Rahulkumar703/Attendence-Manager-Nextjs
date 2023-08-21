@@ -1,23 +1,32 @@
 .dashboard_header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 2rem;
-    padding: .5rem 1rem;
+    padding: .5rem 0;
+    flex-wrap: wrap;
 
-    .back_btn {
-        cursor: pointer;
-        padding: .5rem;
-        border-radius: .5rem;
+    .heading {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
 
-        &:hover {
-            background: var(--transparent);
+        .back_btn {
+            cursor: pointer;
+            padding: .5rem;
+            border-radius: .5rem;
+
+            &:hover {
+                background: var(--transparent);
+            }
         }
-    }
 
-    h2 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        text-decoration: underline;
-        text-decoration-style: double;
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-style: double;
+            white-space: nowrap;
+        }
     }
 }

@@ -1,0 +1,16 @@
+.progressbar_container {
+    pointer-events: none;
+    box-shadow: 0 0 10px var(--gradient1), 0 0 5px var(--gradient2);
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+
+    .progressbar {
+        height: 100%;
+        background: linear-gradient(to right, var(--gradient1), var(--gradient2));
+        transition: .3s ease-in-out;
+    }
+}
