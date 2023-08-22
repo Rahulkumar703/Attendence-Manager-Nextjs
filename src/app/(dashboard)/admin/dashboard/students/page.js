@@ -8,31 +8,8 @@ import FilteredStudents from '@/components/AdminDashboard/Students/FilteredStude
 export default async function Student() {
 
 
-    const StuRes = await fetch(
-        `${process.env.URL}/api/student`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const studentsData = await StuRes.json();
-    // const studentsData = await fetchStudents();
-
-    const DepRes = await fetch(
-        `${process.env.URL}/api/department`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const departmentData = await DepRes.json();
-    // const departmentData = await fetchDepartments();
+    const studentsData = await fetchStudents();
+    const departmentData = await fetchDepartments();
 
 
     return (

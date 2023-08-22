@@ -135,6 +135,7 @@
                 transition: .3s ease-in-out;
                 font-size: 1.4rem;
                 border-bottom: 1px solid var(--transparent-invert);
+                text-transform: capitalize;
 
                 &:hover {
                     background: var(--transparent-invert);

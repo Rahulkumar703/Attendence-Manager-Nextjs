@@ -7,19 +7,8 @@ import FilteredDepartments from '@/components/AdminDashboard/Departments/Filtere
 
 export default async function Department() {
 
-    const res = await fetch(
-        `${process.env.URL}/api/department`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const data = await res.json();
 
-    // const data = await fetchDepartments();
+    const data = await fetchDepartments();
 
     return (
         <div className={styles.dashboard_section}>

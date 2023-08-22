@@ -3,7 +3,29 @@ import { useEffect, useState } from 'react';
 import styles from './styles/Input.module.scss';
 import { FiChevronDown, FiEye, FiEyeOff } from 'react-icons/fi';
 
-export default function Input({
+// Outside the component
+const renderOptions = (options, selectTypedValue, handleOptionSelect) => {
+    const filteredOptions = options.filter(option =>
+        option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
+    );
+
+    if (filteredOptions.length === 0) {
+        return (
+            <div className={styles.options}>
+                <p>No Result found</p>
+            </div>
+        );
+    }
+
+    return filteredOptions.map((option, index) => (
+        <div className={styles.options} key={index} onClick={(e) => handleOptionSelect(e, option)}>
+            <p>{option.name}</p>
+            <p className={styles.code}>Code : {option.code || option.userId}</p>
+        </div>
+    ));
+};
+
+const Input = ({
     type,
     id,
     label,
@@ -14,14 +36,15 @@ export default function Input({
     onChange,
     placeholder,
     className
-}) {
+}) => {
     const [selectTypedValue, setSelectTypedValue] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
 
+
     useEffect(() => {
         setSelectTypedValue(value);
-    }, [value])
+    }, [value]);
 
     const handelChange = (e) => {
         onChange(e);
@@ -37,7 +60,7 @@ export default function Input({
             .filter(option =>
                 option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
             )
-            .length
+            .length;
 
         if (!isValid) {
             const e = {
@@ -72,30 +95,8 @@ export default function Input({
     };
 
     const toggleOptions = () => {
-        setShowOptions(prev => !prev);
-    };
-
-    const renderOptions = () => {
-        if (options && !(options.filter(option =>
-            option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
-        ).length)) {
-            return (
-                <div className={styles.options}>
-                    <p>No Result found</p>
-                </div>
-            );
-        }
-
-        return options && options
-            .filter(option =>
-                option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
-            )
-            .map((option, index) => (
-                <div className={styles.options} key={index} onClick={(e) => handleOptionSelect(e, option)}>
-                    <p>{option.name}</p>
-                    <p className={styles.code}>Code : {option.code || option.userId}</p>
-                </div>
-            ));
+        if (!disabled)
+            setShowOptions(prevShowOptions => !prevShowOptions);
     };
 
     const inputTypeMap = {
@@ -138,7 +139,7 @@ export default function Input({
                         <FiChevronDown size={20} className={styles.icon} />
                     </div>
                     <div className={`${styles.option_box} ${showOptions && styles.active}`}>
-                        {renderOptions()}
+                        {options && renderOptions(options, selectTypedValue, handleOptionSelect)}
                     </div>
                 </div>
                 {label && <label htmlFor={id}>{label}</label>}
@@ -177,4 +178,6 @@ export default function Input({
     };
 
     return inputTypeMap[type] || inputTypeMap.default;
-}
+};
+
+export default Input;

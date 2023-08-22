@@ -7,32 +7,8 @@ import { fetchDepartments, fetchFaculties } from '@/lib/dataFetcher'
 
 export default async function Faculties() {
 
-    const FacRes = await fetch(
-        `${process.env.URL}/api/faculty`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const facultyData = await FacRes.json();
-    // const facultyData = await fetchFaculties();
-
-
-    const DepRes = await fetch(
-        `${process.env.URL}/api/department`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const departmentData = await DepRes.json();
-    // const departmentData = await fetchDepartments();
+    const facultyData = await fetchFaculties();
+    const departmentData = await fetchDepartments();
 
 
     return (

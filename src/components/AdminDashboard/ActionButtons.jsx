@@ -30,24 +30,32 @@ const ActionButtons = ({ data, name }) => {
     }
 
     const handleDelete = async () => {
-        const { _id } = data;
         try {
+            const body = {};
+
+            if (name === 'class') {
+                body.faculty = data?.faculty?._id || '';
+                body.subject = data.subject._id;
+            }
+            else {
+                body._id = data._id;
+            }
             const res = await fetch(`/api/${name}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ _id })
+                body: JSON.stringify(body)
             })
 
-            const data = await res.json();
+            const classData = await res.json();
 
             if (res.status === 200) {
                 setDeleteData({ popup: '', _id: '' })
                 router.refresh();
             }
 
-            toast[data.type](data.message, { toastId: 'deleteData' });
+            toast[classData.type](classData.message, { toastId: 'deleteData' });
 
         } catch (error) {
             toast.error(error.message, { toastId: 'deleteDataError' });
@@ -86,7 +94,7 @@ const ActionButtons = ({ data, name }) => {
                             type="button"
                             varrient="filled"
                             className={styles.edit_btn}
-                            onClick={() => { handleEdit(data) }}
+                            onClick={handleEdit}
                         >
                             <FiEdit3 size={20} />
                         </Button>

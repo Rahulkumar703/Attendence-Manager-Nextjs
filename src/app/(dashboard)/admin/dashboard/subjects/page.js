@@ -7,18 +7,7 @@ import { Suspense } from 'react';
 
 const SubjectPage = async () => {
 
-    const SubRes = await fetch(
-        `${process.env.URL}/api/subject`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            cache: 'no-store'
-        },
-    )
-    const data = await SubRes.json();
-    // const data = await fetchSubjects();
+    const data = await fetchSubjects();
 
     return (
         <div className={styles.dashboard_section}>

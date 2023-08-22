@@ -1,9 +1,11 @@
 
-export async function fetchSubjects() {
+export async function fetchSubjects(semester) {
+
+
 
     try {
         const res = await fetch(
-            `${process.env.URL}/api/subject`,
+            `${process.env.URL}/api/subject/${semester || ''}`,
             {
                 method: "GET",
                 headers: {
@@ -156,6 +158,30 @@ export async function createUpdateDepartments(_id, name, code, isUpdate) {
                     "Content-Type": 'application/json'
                 },
                 body: JSON.stringify({ _id, name, code }),
+                cache: 'no-store'
+            },
+        )
+
+        return res.json();
+
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
+
+export async function createUpdateClasses(subject, faculty, isUpdate) {
+
+    try {
+        const method = isUpdate ? 'PUT' : 'POST';
+        const res = await fetch(
+            `/api/class`,
+            {
+                method,
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify({ subject, faculty }),
                 cache: 'no-store'
             },
         )

@@ -10,7 +10,9 @@ export async function GET(req, { params }) {
     try {
         const { semester } = params;
 
-        const subjects = await Subject.find({ semester }).sort({ name: -1 });
+        const subjects = await Subject.find({ semester })
+            .populate({ path: 'faculty', model: Faculty })
+            .sort({ name: -1 });
 
         if (subjects)
             return NextResponse.json(

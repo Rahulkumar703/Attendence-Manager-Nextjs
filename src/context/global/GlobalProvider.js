@@ -19,6 +19,8 @@ function GlobalProvider({ children }) {
             userId: '',
             code: '',
             department: { name: '', _id: '' },
+            subject: { name: '', _id: '' },
+            faculty: { name: '', _id: '' },
             semester: ''
         }
     });
@@ -36,6 +38,8 @@ function GlobalProvider({ children }) {
                 userId: '',
                 code: '',
                 department: { name: '', _id: '' },
+                subject: { name: '', _id: '' },
+                faculty: { name: '', _id: '' },
                 semester: ''
             }
         })
