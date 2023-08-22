@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
 
         const subjects = await Subject.find({ semester })
             .populate({ path: 'faculty', model: Faculty })
-            .sort({ name: -1 });
+            .sort({ name: 1 });
 
         if (subjects)
             return NextResponse.json(

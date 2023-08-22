@@ -18,6 +18,12 @@ section.dashboard {
     }
 
 
+    .dashboard_card_container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+        gap: 1rem;
+        justify-items: center;
+    }
 
 
     .semester_container {
@@ -33,6 +39,8 @@ section.dashboard {
             font-size: 1.6rem;
             transition: .3s ease-in-out;
             border: .5px solid var(--transparent);
+            font-weight: 500;
+            min-height: 10rem;
 
             &:hover {
                 box-shadow: 0 1rem 2rem -.5rem var(--shadow);

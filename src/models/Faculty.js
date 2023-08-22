@@ -27,6 +27,13 @@ const FacultySchema = mongoose.Schema({
         required: [true, "Please enter your Department."],
         trim: true,
     },
+    intrestes: [
+        {
+            type: String,
+            lowercase: true,
+            trim: true
+        }
+    ],
     password: {
         type: String,
         required: [true, "Password is required."],

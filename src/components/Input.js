@@ -6,7 +6,7 @@ import { FiChevronDown, FiEye, FiEyeOff } from 'react-icons/fi';
 // Outside the component
 const renderOptions = (options, selectTypedValue, handleOptionSelect) => {
     const filteredOptions = options.filter(option =>
-        option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
+        option?.name?.toLowerCase()?.includes(selectTypedValue?.toLowerCase())
     );
 
     if (filteredOptions.length === 0) {
@@ -41,7 +41,6 @@ const Input = ({
     const [showPassword, setShowPassword] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
 
-
     useEffect(() => {
         setSelectTypedValue(value);
     }, [value]);
@@ -58,7 +57,7 @@ const Input = ({
     const handleBlur = () => {
         const isValid = options
             .filter(option =>
-                option.name.toLowerCase().includes(selectTypedValue.toLowerCase())
+                option?.name?.toLowerCase()?.includes(selectTypedValue?.toLowerCase())
             )
             .length;
 

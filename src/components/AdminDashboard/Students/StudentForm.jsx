@@ -30,6 +30,7 @@ export const StudentForm = ({ departments }) => {
                 name: '',
                 userId: '',
                 semester: '',
+                batch: '',
                 registration_number: '',
                 department: { name: '', _id: '' },
             }
@@ -65,14 +66,15 @@ export const StudentForm = ({ departments }) => {
                 form.registration_number === '' ||
                 form.userId === '' ||
                 form.department._id === '' ||
-                form.semester === '') {
+                form.semester === '' ||
+                form.batch === '') {
                 toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
                 return;
             }
 
-            const { _id, name, userId, registration_number, semester, department } = form
+            const { _id, name, userId, registration_number, semester, department, batch } = form
 
-            const data = await createUpdateStudents(_id, name, userId, registration_number, semester, department._id, form.isUpdate);
+            const data = await createUpdateStudents(_id, name, userId, registration_number, semester, department._id, batch, form.isUpdate);
 
             if (data) {
                 setGlobalState(prev => ({
@@ -84,6 +86,7 @@ export const StudentForm = ({ departments }) => {
                         name: '',
                         userId: '',
                         semester: '',
+                        batch: '',
                         registration_number: '',
                         department: { name: '', _id: '' },
                     }
@@ -141,25 +144,18 @@ export const StudentForm = ({ departments }) => {
             >
                 <div>
                     <div className={styles.form_input_section}>
-                        <h3 className={styles.form_heading}>Personal Details:</h3>
-                        <div className={styles.form_body}>
-                            <Input
-                                type={"text"}
-                                name={"name"}
-                                id={"name"}
-                                label={"Name"}
-                                onChange={handleChange}
-                                value={form.name}
-                                disabled={form.loading}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className={styles.form_input_section}>
-                        <h3 className={styles.form_heading}>Academic  Details:</h3>
+                        <h3 className={styles.form_heading}>Student Details:</h3>
                         <div className={styles.form_body}>
                             <div className={styles.grid}>
+                                <Input
+                                    type={"text"}
+                                    name={"name"}
+                                    id={"name"}
+                                    label={"Name"}
+                                    onChange={handleChange}
+                                    value={form.name}
+                                    disabled={form.loading}
+                                />
                                 <Input
                                     type={"number"}
                                     name={"userId"}
@@ -167,6 +163,15 @@ export const StudentForm = ({ departments }) => {
                                     label={"Student Roll no."}
                                     onChange={handleChange}
                                     value={form.userId}
+                                    disabled={form.loading}
+                                />
+                                <Input
+                                    type={"number"}
+                                    name={"batch"}
+                                    id={"batch"}
+                                    label={"Admission Year (Batch)"}
+                                    onChange={handleChange}
+                                    value={form.batch}
                                     disabled={form.loading}
                                 />
                                 <Input

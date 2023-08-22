@@ -77,7 +77,7 @@ export async function fetchDepartments() {
     }
 }
 
-export async function createUpdateSubjects(_id, name, code, semester, isUpdate) {
+export async function createUpdateSubjects(_id, name, code, semester, department, isUpdate) {
 
     try {
         const method = isUpdate ? 'PUT' : 'POST';
@@ -88,7 +88,7 @@ export async function createUpdateSubjects(_id, name, code, semester, isUpdate) 
                 headers: {
                     "Content-Type": 'application/json'
                 },
-                body: JSON.stringify({ _id, name, code, semester }),
+                body: JSON.stringify({ _id, name, code, semester, department }),
                 cache: 'no-store'
             },
         )
@@ -100,7 +100,7 @@ export async function createUpdateSubjects(_id, name, code, semester, isUpdate) 
     }
 }
 
-export async function createUpdateStudents(_id, name, userId, registration_number, semester, department, isUpdate) {
+export async function createUpdateStudents(_id, name, userId, registration_number, semester, department, batch, isUpdate) {
 
     try {
         const method = isUpdate ? 'PUT' : 'POST';
@@ -111,7 +111,7 @@ export async function createUpdateStudents(_id, name, userId, registration_numbe
                 headers: {
                     "Content-Type": 'application/json'
                 },
-                body: JSON.stringify({ _id, name, userId, registration_number, semester, department, password: userId }),
+                body: JSON.stringify({ _id, name, userId, registration_number, semester, department, batch, password: userId }),
                 cache: 'no-store'
             },
         )

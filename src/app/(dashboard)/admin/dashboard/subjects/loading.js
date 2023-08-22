@@ -5,9 +5,7 @@ export default function loading() {
     return (
         <section className={`${styles.dashboard_section} ${styles.loader}`}>
             <ProgressBar />
-            <div className={styles.dashboard_section}>
-                <h2>Loading...</h2>
-            </div>
+            <h2>Loading...</h2>
         </section>
     )
 }

@@ -1,20 +1,21 @@
 import FilteredSubjects from '@/components/AdminDashboard/Subjects/FilteredSubjects';
 import { SubjectForm } from '@/components/AdminDashboard/Subjects/SubjectForm';
 import DashboardHeader from '@/components/DashboardHeader'
-import { fetchSubjects } from '@/lib/dataFetcher'
+import { fetchDepartments, fetchSubjects } from '@/lib/dataFetcher'
 import styles from '@/styles/admin_dashboard.module.scss'
 import { Suspense } from 'react';
 
 const SubjectPage = async () => {
 
-    const data = await fetchSubjects();
+    const subjectsData = await fetchSubjects();
+    const departmentData = await fetchDepartments();
 
     return (
         <div className={styles.dashboard_section}>
             <DashboardHeader heading={'Manage Subjects'} />
-            <SubjectForm />
+            <SubjectForm departments={departmentData?.departments || []} />
             <Suspense fallback={<h1>Loading...</h1>}>
-                <FilteredSubjects data={data?.subjects || []} />
+                <FilteredSubjects subjects={subjectsData?.subjects || []} />
             </Suspense>
         </div>
     )

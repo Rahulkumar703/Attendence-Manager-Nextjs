@@ -17,6 +17,12 @@ const SubjectSchema = mongoose.Schema({
         required: [true, "Please enter Subject Semester."],
         trim: true
     },
+    department: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, "Please enter Subject Branch"],
+        ref: "department",
+        trim: true,
+    },
     faculty: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "faculty",

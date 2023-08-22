@@ -37,6 +37,7 @@ function GlobalProvider({ children }) {
                 registration_number: '',
                 userId: '',
                 code: '',
+                batch: '',
                 department: { name: '', _id: '' },
                 subject: { name: '', _id: '' },
                 faculty: { name: '', _id: '' },

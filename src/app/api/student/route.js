@@ -25,7 +25,7 @@ export async function GET() {
                     }
                 ]
             })
-            .sort({ name: -1 });
+            .sort({ name: 1 });
         if (students) {
             return NextResponse.json({ message: 'Students Fetched Successfully', type: 'success', students }, { status: 200 });
         }
@@ -40,11 +40,11 @@ export async function POST(req) {
 
     try {
         const reqBody = await req.json();
-        const { userId, department, name, registration_number, password, semester } = reqBody;
+        const { userId, department, name, registration_number, password, semester, batch } = reqBody;
 
         // validating Request body
 
-        if (!userId || !department || !name || !registration_number || !password) {
+        if (!userId || !department || !name || !registration_number || !password || !batch) {
             return NextResponse.json(
                 { message: "Fill all details correctly", type: "error" },
                 { status: 400 }
@@ -60,7 +60,7 @@ export async function POST(req) {
         }
 
         // Create The User
-        let newUser = new Student({ userId, department, name, registration_number, password, semester });
+        let newUser = new Student({ userId, department, name, registration_number, password, semester, batch });
         await newUser.save();
 
         const userDepartnemt = await Department.findById(newUser.department);

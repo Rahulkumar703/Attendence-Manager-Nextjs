@@ -1,0 +1,33 @@
+.card_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    transition: .3s ease-in-out;
+    border-radius: 1rem;
+    border: 1px solid var(--transparent);
+    width: 100%;
+    min-height: 20rem;
+
+    &:hover {
+        box-shadow: 0 1rem 2rem -.5rem var(--shadow);
+        transform: scale(1.01);
+    }
+
+    .card_icon {
+        opacity: .3;
+    }
+
+    .card_data {
+        font-size: 2rem;
+        opacity: .8;
+        font-weight: 900;
+    }
+
+    .card_text {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+}

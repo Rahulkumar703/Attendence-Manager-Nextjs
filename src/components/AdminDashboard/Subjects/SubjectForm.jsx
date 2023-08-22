@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { createUpdateSubjects } from '@/lib/dataFetcher';
 
-export const SubjectForm = () => {
+export const SubjectForm = ({ departments }) => {
 
     const { globalState, setGlobalState } = useContext(GlobalContext);
     const router = useRouter();
@@ -28,7 +28,8 @@ export const SubjectForm = () => {
                 loading: false,
                 name: '',
                 code: '',
-                semester: ''
+                semester: '',
+                department: { name: '', _id: '' },
             }
         })
         )
@@ -57,14 +58,14 @@ export const SubjectForm = () => {
 
         try {
 
-            if (form.name === '' || form.code === '' || form.semester === '') {
+            if (form.name === '' || form.code === '' || form.semester === '' || form.department._id === '') {
                 toast.error('Please Fill all Details.', { toastId: 'emptyForm' });
                 return;
             }
 
-            const { _id, name, code, semester } = form
+            const { _id, name, code, semester, department } = form
 
-            const data = await createUpdateSubjects(_id, name, code, semester, form.isUpdate);
+            const data = await createUpdateSubjects(_id, name, code, semester, department._id, form.isUpdate);
 
             if (data) {
                 setGlobalState(prev => ({
@@ -75,7 +76,8 @@ export const SubjectForm = () => {
                         isUpdate: false,
                         name: "",
                         code: "",
-                        semester: ""
+                        semester: "",
+                        department: { name: '', _id: '' },
                     }
                 }))
             }
@@ -132,35 +134,47 @@ export const SubjectForm = () => {
                 <div>
                     <div className={styles.form_input_section}>
                         <h3 className={styles.form_heading}>Subject Details:</h3>
-                        <div className={`${styles.form_body} ${styles.row}`}>
-                            <Input
-                                type={"text"}
-                                name={"name"}
-                                id={"name"}
-                                label={"Subject Name"}
-                                onChange={handleChange}
-                                value={form.name}
-                                disabled={form.loading}
-                            />
-                            <Input
-                                type={"text"}
-                                name={"code"}
-                                id={"code"}
-                                label={"Subject Code"}
-                                onChange={handleChange}
-                                value={form.code}
-                                disabled={form.loading}
-                            />
+                        <div className={`${styles.form_body}`}>
+                            <div className={` ${styles.grid}`}>
+                                <Input
+                                    type={"text"}
+                                    name={"name"}
+                                    id={"name"}
+                                    label={"Subject Name"}
+                                    onChange={handleChange}
+                                    value={form.name}
+                                    disabled={form.loading}
+                                />
+                                <Input
+                                    type={"text"}
+                                    name={"code"}
+                                    id={"code"}
+                                    label={"Subject Code"}
+                                    onChange={handleChange}
+                                    value={form.code}
+                                    disabled={form.loading}
+                                />
+                                <Input
+                                    type={"text"}
+                                    name={"semester"}
+                                    id={"semester"}
+                                    label={"Subject Semester"}
+                                    onChange={handleChange}
+                                    value={form.semester}
+                                    disabled={form.loading}
+                                />
+                                <Input
+                                    type={"select"}
+                                    options={departments}
+                                    name={"department"}
+                                    id={"department"}
+                                    label={"Branch"}
+                                    onChange={handleChange}
+                                    value={form.department.name}
+                                    disabled={false}
+                                />
+                            </div>
                         </div>
-                        <Input
-                            type={"text"}
-                            name={"semester"}
-                            id={"semester"}
-                            label={"Subject Semester"}
-                            onChange={handleChange}
-                            value={form.semester}
-                            disabled={form.loading}
-                        />
                     </div>
                 </div>
                 <Button

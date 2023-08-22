@@ -11,7 +11,8 @@ export async function GET() {
     try {
         let response = await Subject.find()
             .populate({ path: 'faculty', model: Faculty })
-            .sort({ name: -1 });
+            .populate({ path: 'department', model: Department })
+            .sort({ name: 1 });
 
         if (response) {
             return NextResponse.json({ message: 'Subjects Fetched Successfully', type: 'success', subjects: response }, { status: 200 });
@@ -27,11 +28,11 @@ export async function POST(req) {
 
     try {
         const reqBody = await req.json();
-        const { name, code, semester } = reqBody;
+        const { name, code, semester, department } = reqBody;
 
 
         // validating Request body
-        if (!name || !code) {
+        if (!name || !code || !semester || !department) {
             return NextResponse.json(
                 { message: "Fill all details correctly", type: "error" },
                 { status: 400 }
@@ -47,7 +48,7 @@ export async function POST(req) {
         }
 
         // Create The Subject
-        let newSubject = new Subject({ name, code, semester });
+        let newSubject = new Subject({ name, code, semester, department });
         await newSubject.save();
 
 
@@ -100,7 +101,6 @@ export async function PUT(req) {
         connect();
 
         const reqBody = await req.json();
-        console.log(reqBody);
 
         const updatedData = await Subject.updateOne({ _id: reqBody._id }, reqBody);
 

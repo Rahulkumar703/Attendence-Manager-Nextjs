@@ -1,34 +1,30 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt'
 
-const classesSchema = mongoose.Schema({
-    type: [
-        {
-            subject: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'subject',
-            },
-            faculty: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'faculty'
-            },
-            attendence: {
-                type: [
-                    {
-                        date: {
-                            type: Date,
-                            default: Date.now()
-                        },
-                        present: {
-                            type: Boolean,
-                            default: false
-                        }
-                    }
-                ]
+const classesSchema = mongoose.Schema([
+    {
+        subject: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'subject',
+        },
+        faculty: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'faculty'
+        },
+        attendence: [
+            {
+                date: {
+                    type: Date,
+                    default: Date.now()
+                },
+                present: {
+                    type: Boolean,
+                    default: false
+                }
             }
-        }
-    ]
-}
+        ]
+    }
+]
 );
 
 
@@ -47,7 +43,7 @@ const StudentSchema = mongoose.Schema({
         unique: true
     },
     registration_number: {
-        type: Number,
+        type: String,
         required: [true, "Please enter your Registration Number."],
         trim: true,
         unique: true,
@@ -71,6 +67,11 @@ const StudentSchema = mongoose.Schema({
     semester: {
         type: Number,
         required: [true, "Please enter your Semester."],
+        trim: true,
+    },
+    batch: {
+        type: Number,
+        required: [true, "Please enter your Batch."],
         trim: true,
     },
     level: {

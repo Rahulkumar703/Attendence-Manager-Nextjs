@@ -14,7 +14,7 @@ export async function GET() {
                 { path: 'department', model: Department },
                 { path: 'subjects', model: Subject }
             ])
-            .sort({ name: -1 });
+            .sort({ name: 1 });
 
         if (response) {
 
